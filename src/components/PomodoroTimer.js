@@ -1,12 +1,46 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { AppContext } from "../context/AppContext";
-import { Box, Text, Progress, Button, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Progress,
+  Button,
+  Stack,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Checkbox,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+} from "@chakra-ui/react";
+import { SettingsIcon } from "@chakra-ui/icons";
 
 const PomodoroTimer = () => {
   const {
     workTime,
+    setWorkTime, // Adicionado
     breakTime,
+    setBreakTime, // Adicionado
+    longBreakTime,
+    setLongBreakTime, // Adicionado
+    cyclesBeforeLongBreak,
+    setCyclesBeforeLongBreak, // Adicionado
     strictMode,
+    setStrictMode, // Adicionado
+    notificationsEnabled,
+    setNotificationsEnabled, // Adicionado
     sendNotification,
     sessions,
     setSessions,
@@ -14,17 +48,19 @@ const PomodoroTimer = () => {
   const [timeLeft, setTimeLeft] = useState(workTime * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isWorkSession, setIsWorkSession] = useState(true);
+  const [cycleCount, setCycleCount] = useState(0);
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+
+  const audioRef = useRef(new Audio("/sound.mp3"));
 
   useEffect(() => {
     let timer;
     if (isRunning && timeLeft > 0) {
       timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
     } else if (timeLeft === 0) {
-      const sessionType = isWorkSession ? "Work" : "Break";
-      sendNotification(`${sessionType} Finalizado`, {
-        body: `Tempo de ${sessionType.toLowerCase()} concluído!`,
-      });
+      if (notificationsEnabled) audioRef.current.play().catch((error) => console.error("Erro ao tocar som:", error));
       if (isWorkSession) {
+        setCycleCount((prev) => prev + 1);
         setSessions([
           ...sessions,
           {
@@ -34,53 +70,189 @@ const PomodoroTimer = () => {
           },
         ]);
       }
-      setIsWorkSession(!isWorkSession);
-      setTimeLeft(isWorkSession ? breakTime * 60 : workTime * 60);
-      setIsRunning(true); // Inicia automaticamente após a pausa
+      if (!isWorkSession && cycleCount >= cyclesBeforeLongBreak) {
+        setTimeLeft(longBreakTime * 60);
+        setCycleCount(0);
+      } else {
+        setIsWorkSession(!isWorkSession);
+        setTimeLeft(isWorkSession ? workTime * 60 : (cycleCount >= cyclesBeforeLongBreak ? longBreakTime * 60 : breakTime * 60));
+      }
+      setIsRunning(true);
     }
     return () => clearInterval(timer);
-  }, [isRunning, timeLeft, isWorkSession, workTime, breakTime]);
+  }, [isRunning, timeLeft, isWorkSession, workTime, breakTime, longBreakTime, cyclesBeforeLongBreak, cycleCount, notificationsEnabled, sendNotification, sessions]);
 
-  const startTimer = () => setIsRunning(true);
-  const pauseTimer = () => !strictMode && setIsRunning(false);
-  const resetTimer = () => {
-    if (!strictMode) {
-      setIsRunning(false);
-      setTimeLeft(isWorkSession ? workTime * 60 : breakTime * 60);
+  const toggleTimer = () => {
+    if (!strictMode || !isRunning) {
+      setIsRunning(!isRunning);
     }
   };
 
-  const progress = ((isWorkSession ? workTime * 60 : breakTime * 60 - timeLeft) / (isWorkSession ? workTime * 60 : breakTime * 60)) * 100;
+  const resetTimer = () => {
+    if (!strictMode) {
+      setIsRunning(false);
+      setIsWorkSession(true);
+      setTimeLeft(workTime * 60);
+      setCycleCount(0);
+    }
+  };
+
+  const handleConfigClose = () => setIsConfigOpen(false);
+
+  const progress =
+    ((isWorkSession ? workTime * 60 : (cycleCount >= cyclesBeforeLongBreak ? longBreakTime * 60 : breakTime * 60) - timeLeft) /
+      (isWorkSession ? workTime * 60 : (cycleCount >= cyclesBeforeLongBreak ? longBreakTime * 60 : breakTime * 60))) *
+    100;
 
   return (
     <Box p={6} bg="dark.200" borderRadius={8} boxShadow="md">
-      <Text fontSize="3xl" fontWeight="bold" mb={4}>
-        {isWorkSession ? "Trabalho" : "Pausa"}
-      </Text>
+      <Stack direction="row" justify="space-between" align="center" mb={4}>
+        <Text fontSize="3xl" fontWeight="bold">
+          {isWorkSession ? "Trabalho" : "Pausa"}
+        </Text>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<SettingsIcon />}
+            variant="outline"
+            colorScheme="dark"
+            aria-label="Configurações do Temporizador"
+          />
+          <MenuList bg="dark.200" borderColor="dark.300">
+            <MenuItem onClick={() => setIsConfigOpen(true)}>
+              Configurar Temporizador
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </Stack>
       <Text fontSize="5xl" fontFamily="mono" mb={4}>
         {Math.floor(timeLeft / 60).toString().padStart(2, "0")}:
         {(timeLeft % 60).toString().padStart(2, "0")}
       </Text>
       <Progress value={progress} colorScheme="blue" size="sm" mb={4} />
       <Stack direction="row" spacing={4}>
-        <Button onClick={startTimer} colorScheme="blue">
-          Iniciar
-        </Button>
         <Button
-          onClick={pauseTimer}
-          colorScheme="yellow"
-          isDisabled={strictMode}
+          onClick={toggleTimer}
+          colorScheme={isRunning ? "yellow" : "blue"}
+          size="lg"
+          leftIcon={isRunning ? <>⏸</> : <>▶</>}
+          isDisabled={strictMode && isRunning}
         >
-          Pausar
+          {isRunning ? "Pausar" : "Iniciar"}
         </Button>
         <Button
           onClick={resetTimer}
           colorScheme="red"
+          size="lg"
+          leftIcon={<>⏹</>}
           isDisabled={strictMode}
         >
           Reiniciar
         </Button>
       </Stack>
+
+      <Modal isOpen={isConfigOpen} onClose={handleConfigClose}>
+        <ModalOverlay />
+        <ModalContent bg="dark.200" color="white">
+          <ModalHeader>Configurações do Temporizador</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack spacing={4}>
+              <Box>
+                <Text mb={2}>Tempo de Trabalho (min):</Text>
+                <NumberInput
+                  value={workTime}
+                  onChange={(_, value) => setWorkTime(value)} // Agora definido
+                  min={1}
+                  max={120}
+                  bg="dark.300"
+                  color="white"
+                  borderRadius={4}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Box>
+              <Box>
+                <Text mb={2}>Tempo de Pausa Curta (min):</Text>
+                <NumberInput
+                  value={breakTime}
+                  onChange={(_, value) => setBreakTime(value)} // Agora definido
+                  min={1}
+                  max={60}
+                  bg="dark.300"
+                  color="white"
+                  borderRadius={4}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Box>
+              <Box>
+                <Text mb={2}>Tempo de Pausa Longa (min):</Text>
+                <NumberInput
+                  value={longBreakTime}
+                  onChange={(_, value) => setLongBreakTime(value)} // Agora definido
+                  min={1}
+                  max={60}
+                  bg="dark.300"
+                  color="white"
+                  borderRadius={4}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Box>
+              <Box>
+                <Text mb={2}>Ciclos Antes da Pausa Longa:</Text>
+                <NumberInput
+                  value={cyclesBeforeLongBreak}
+                  onChange={(_, value) => setCyclesBeforeLongBreak(value)} // Agora definido
+                  min={1}
+                  max={10}
+                  bg="dark.300"
+                  color="white"
+                  borderRadius={4}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Box>
+              <Checkbox
+                isChecked={strictMode}
+                onChange={(e) => setStrictMode(e.target.checked)} // Agora definido
+                colorScheme="blue"
+              >
+                Modo Estrito (sem pausas ou reinícios manuais)
+              </Checkbox>
+              <Checkbox
+                isChecked={notificationsEnabled}
+                onChange={(e) => setNotificationsEnabled(e.target.checked)} // Agora definido
+                colorScheme="blue"
+              >
+                Notificações Sonoras
+              </Checkbox>
+            </Stack>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleConfigClose}>
+              Salvar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
