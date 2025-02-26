@@ -1,3 +1,4 @@
+// File: /src/App.js
 import React, { useState, useEffect, useContext, useRef } from "react";
 import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
@@ -10,6 +11,12 @@ const App = () => {
   const [activeTab, setActiveTab] = useState("timer");
   const [position, setPosition] = useState({ x: 50, y: 50 }); // Posição inicial
   const dragRef = useRef(null);
+
+  // Define a largura do container com base na aba ativa
+  const containerWidth =
+    activeTab === "history"
+      ? { base: "95%", md: "900px" }
+      : { base: "95%", md: "640px" };
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -42,7 +49,7 @@ const App = () => {
     document.body.style.overflow = "hidden"; // Bloqueia a barra de scroll
   }, []);
 
-  // Lógica de arrastar original do código que você forneceu
+  // Lógica de arrastar
   const handleMouseDown = (e) => {
     if (dragRef.current && (e.target === dragRef.current || dragRef.current.contains(e.target))) {
       const startX = e.clientX - position.x;
@@ -62,7 +69,6 @@ const App = () => {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
 
-      // Prevenir seleção de texto e outros eventos padrão
       e.preventDefault();
     }
   };
@@ -78,16 +84,16 @@ const App = () => {
       fontFamily="MS Sans Serif"
     >
       <Box
-        w={{ base: "95%", md: "640px" }}
+        w={containerWidth}
         maxW="95%"
         bg="xpBlue.100"
         border="2px solid"
         borderColor="xpGray.200"
         boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
-        position="absolute" // Posicionamento absoluto para movimento livre
+        position="absolute"
         left={position.x}
         top={position.y}
-        style={{ transition: "transform 0.1s ease" }} // Transição suave para evitar glitches
+        style={{ transition: "transform 0.1s ease" }}
       >
         {/* Barra de título */}
         <Flex
@@ -101,7 +107,7 @@ const App = () => {
           borderColor="xpGray.200"
           boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
           cursor="move"
-          userSelect="none" // Prevenir seleção de texto durante o drag
+          userSelect="none"
         >
           <Flex align="center">
             <Box
@@ -163,7 +169,7 @@ const App = () => {
           </Stack>
         </Flex>
 
-        {/* Conteúdo interno fixo */}
+        {/* Conteúdo interno */}
         <Box position="relative" p={4} bg="xpBlue.100">
           <Stack
             direction="row"
