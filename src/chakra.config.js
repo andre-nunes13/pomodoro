@@ -7,45 +7,47 @@ const customTheme = extendTheme({
   },
   colors: {
     xpBlue: {
-      100: "#F0F0F0", // Fundo mais claro e sólido, como janelas do XP
-      200: "#0052CC", // Azul escuro dos títulos
-      300: "#3A8DDE", // Azul claro dos botões
-      400: "#A3BFFA", // Destaque suave
+      100: "#ECE9D8", // Fundo claro das janelas
+      200: "#003087", // Azul escuro da barra de título
+      300: "#C0C0C0", // Cinza claro dos botões inativos
+      400: "#A3BFFA", // Azul suave para destaques
     },
     xpGray: {
-      100: "#D4D0C8", // Cinza claro do fundo do desktop
+      100: "#D4D0C8", // Cinza do fundo do desktop
       200: "#808080", // Cinza médio das bordas
       300: "#404040", // Cinza escuro para texto
     },
     xpGreen: {
-      500: "#008000", // Verde para botões de ação
+      500: "#008000", // Verde para ações
     },
     xpRed: {
-      500: "#FF0000", // Vermelho para botões de erro
+      500: "#C00000", // Vermelho escuro dos botões de fechar
+      600: "#A00000", // Hover do vermelho
     },
     xpYellow: {
       500: "#FFFF00", // Amarelo para destaque
     },
   },
   fonts: {
-    body: "MS Sans Serif, sans-serif", // Fonte padrão do XP
-    heading: "MS Sans Serif, sans-serif",
+    body: "MS Sans Serif, Tahoma, sans-serif",
+    heading: "MS Sans Serif, Tahoma, sans-serif",
   },
   components: {
     Button: {
       baseStyle: {
         border: "1px solid",
         borderColor: "xpGray.200",
-        boxShadow: "inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)", // Efeito chanfrado 3D
-        rounded: "none", // Botões retos
+        boxShadow: "inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)", // Efeito 3D
+        rounded: "none", // Sem bordas arredondadas
         bg: "xpBlue.300",
         color: "black",
+        fontWeight: "normal",
         _hover: {
           bg: "xpBlue.400",
           boxShadow: "inset 1px 1px 2px rgba(0, 0, 0, 0.5)",
         },
         _active: {
-          boxShadow: "inset 1px 1px 2px rgba(0, 0, 0, 0.5)",
+          boxShadow: "inset 2px 2px 4px rgba(0, 0, 0, 0.5)",
         },
       },
     },
@@ -53,9 +55,8 @@ const customTheme = extendTheme({
       baseStyle: {
         border: "1px solid",
         borderColor: "xpGray.200",
-        bg: "xpBlue.100", // Fundo sólido
-        boxShadow: "inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)", // Sombra chanfrada
-        opacity: "1", // Remove qualquer transparência
+        bg: "xpBlue.100",
+        boxShadow: "inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)",
       },
     },
     Input: {
@@ -65,42 +66,6 @@ const customTheme = extendTheme({
         bg: "white",
         boxShadow: "inset 1px 1px 2px rgba(0, 0, 0, 0.2)",
         rounded: "none",
-        opacity: "1", // Remove transparência
-      },
-    },
-    Select: {
-      baseStyle: {
-        border: "1px solid",
-        borderColor: "xpGray.200",
-        bg: "white",
-        boxShadow: "inset 1px 1px 2px rgba(0, 0, 0, 0.2)",
-        rounded: "none",
-        opacity: "1", // Remove transparência
-      },
-    },
-    ModalContent: {
-      baseStyle: {
-        bg: "xpBlue.100", // Fundo sólido do modal
-        border: "1px solid",
-        borderColor: "xpGray.200",
-        boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)", // Sombra mais definida
-        opacity: "1", // Remove transparência
-      },
-    },
-    MenuList: {
-      baseStyle: {
-        bg: "xpBlue.100",
-        border: "1px solid",
-        borderColor: "xpGray.200",
-        boxShadow: "1px 1px 2px rgba(0, 0, 0, 0.5)",
-        opacity: "1", // Remove transparência
-      },
-    },
-    Progress: {
-      baseStyle: {
-        bg: "xpGray.200",
-        boxShadow: "inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)",
-        opacity: "1", // Remove transparência
       },
     },
   },
