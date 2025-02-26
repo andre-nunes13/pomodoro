@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
+import React, { useContext, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 import {
   Box,
@@ -41,139 +41,24 @@ const PomodoroTimer = () => {
     setStrictMode,
     notificationsEnabled,
     setNotificationsEnabled,
-    sendNotification,
-    sessions,
-    setSessions,
+    timeLeft,
+    isRunning,
+    isWorkSession,
+    cycleCount,
+    toggleTimer,
+    resetTimer,
+    formatTime,
   } = useContext(AppContext);
 
-  const [timeLeft, setTimeLeft] = useState(workTime * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isWorkSession, setIsWorkSession] = useState(true);
-  const [cycleCount, setCycleCount] = useState(0);
-  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isConfigOpen, setIsConfigOpen] = React.useState(false);
 
-  const audioRef = useRef(new Audio("/sound.mp3"));
-  const timerRef = useRef(null); // Referência para o intervalo do timer
-
-  // Função para formatar o tempo em MM:SS
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
-    const secs = (seconds % 60).toString().padStart(2, "0");
-    return `${minutes}:${secs}`;
-  };
-
-  // Memorize as funções para evitar re-renderizações desnecessárias
-  const toggleTimer = useCallback(() => {
-    if (!strictMode || !isRunning) {
-      setIsRunning((prev) => !prev);
-    }
-  }, [strictMode, isRunning]);
-
-  const resetTimer = useCallback(() => {
-    if (!strictMode) {
-      setIsRunning(false);
-      setIsWorkSession(true);
-      setTimeLeft(workTime * 60);
-      setCycleCount(0);
-    }
-  }, [strictMode, workTime]);
-
-  const handleConfigClose = useCallback(() => {
-    setIsConfigOpen(false);
-  }, []);
-
-  // useEffect para gerenciar o timer (iniciar/parar a contagem regressiva)
-  useEffect(() => {
-    const startTimer = () => {
-      if (isRunning && timeLeft > 0) {
-        timerRef.current = setInterval(() => {
-          setTimeLeft((prev) => prev - 1);
-        }, 1000);
-      } else {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-
-    startTimer();
-
-    return () => clearInterval(timerRef.current);
-  }, [isRunning, timeLeft]);
-
-  // useEffect para lidar com a mudança de sessão quando timeLeft chega a 0
-  useEffect(() => {
-    if (timeLeft === 0) {
-      if (notificationsEnabled) {
-        audioRef.current.play().catch((error) => console.error("Erro ao tocar som:", error));
-      }
-      if (isWorkSession) {
-        setCycleCount((prev) => prev + 1);
-        setSessions((prev) => [
-          ...prev,
-          {
-            date: new Date().toLocaleString(),
-            duration: workTime,
-            category: "Estudo",
-          },
-        ]);
-      }
-      const nextSessionTime = isWorkSession
-        ? cycleCount >= cyclesBeforeLongBreak - 1
-          ? longBreakTime * 60
-          : breakTime * 60
-        : workTime * 60;
-      setIsWorkSession((prev) => !prev);
-      setTimeLeft(nextSessionTime);
-      setIsRunning(true);
-    }
-  }, [
-    timeLeft,
-    isWorkSession,
-    workTime,
-    breakTime,
-    longBreakTime,
-    cyclesBeforeLongBreak,
-    cycleCount,
-    notificationsEnabled,
-    sendNotification,
-    sessions,
-  ]);
-
-  // useEffect para salvar configurações no localStorage
-  useEffect(() => {
-    localStorage.setItem("workTime", workTime);
-    localStorage.setItem("breakTime", breakTime);
-    localStorage.setItem("longBreakTime", longBreakTime);
-    localStorage.setItem("cyclesBeforeLongBreak", cyclesBeforeLongBreak);
-    localStorage.setItem("strictMode", JSON.stringify(strictMode));
-    localStorage.setItem("notificationsEnabled", JSON.stringify(notificationsEnabled));
-  }, [workTime, breakTime, longBreakTime, cyclesBeforeLongBreak, strictMode, notificationsEnabled]);
-
-  // useEffect para carregar configurações do localStorage ao montar o componente
-  useEffect(() => {
-    const savedWorkTime = parseInt(localStorage.getItem("workTime")) || 25;
-    const savedBreakTime = parseInt(localStorage.getItem("breakTime")) || 5;
-    const savedLongBreakTime = parseInt(localStorage.getItem("longBreakTime")) || 15;
-    const savedCycles = parseInt(localStorage.getItem("cyclesBeforeLongBreak")) || 4;
-    const savedStrictMode = JSON.parse(localStorage.getItem("strictMode")) || false;
-    const savedNotifications = JSON.parse(localStorage.getItem("notificationsEnabled")) || true;
-
-    setWorkTime(savedWorkTime);
-    setBreakTime(savedBreakTime);
-    setLongBreakTime(savedLongBreakTime);
-    setCyclesBeforeLongBreak(savedCycles);
-    setStrictMode(savedStrictMode);
-    setNotificationsEnabled(savedNotifications);
-    setTimeLeft(savedWorkTime * 60); // Reinicia o timer com o workTime salvo
-  }, [setWorkTime, setBreakTime, setLongBreakTime, setCyclesBeforeLongBreak, setStrictMode, setNotificationsEnabled]);
-
-  // useEffect para atalhos de teclado
+  // Atalhos de teclado
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (document.activeElement.tagName === "INPUT") return;
       switch (event.key) {
         case " ":
-          event.preventDefault(); // Evita rolagem da página
+          event.preventDefault();
           toggleTimer();
           break;
         case "r":
@@ -188,7 +73,9 @@ const PomodoroTimer = () => {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [toggleTimer, resetTimer]);
 
-  // Calcular progresso para a Progress bar
+  const handleConfigClose = () => setIsConfigOpen(false);
+
+  // Calcular progresso
   const totalTime = isWorkSession
     ? workTime * 60
     : cycleCount >= cyclesBeforeLongBreak - 1

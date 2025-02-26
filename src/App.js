@@ -12,6 +12,9 @@ const App = () => {
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (document.activeElement.tagName === "INPUT") return;
+      // Defensive check to ensure keyboardShortcuts exists
+      if (!keyboardShortcuts) return;
+
       switch (event.key) {
         case keyboardShortcuts.timer:
           setActiveTab("timer");
