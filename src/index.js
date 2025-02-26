@@ -5,6 +5,8 @@ import { AppProvider } from "./context/AppContext"; // Certifique-se de importar
 import App from "./App";
 import customTheme from "./chakra.config";
 import "./index.css";
+document.body.style.cursor = "url('/xp-cursor.cur'), auto";
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

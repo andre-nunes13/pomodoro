@@ -30,17 +30,17 @@ import { SettingsIcon } from "@chakra-ui/icons";
 const PomodoroTimer = () => {
   const {
     workTime,
-    setWorkTime, // Adicionado
+    setWorkTime,
     breakTime,
-    setBreakTime, // Adicionado
+    setBreakTime,
     longBreakTime,
-    setLongBreakTime, // Adicionado
+    setLongBreakTime,
     cyclesBeforeLongBreak,
-    setCyclesBeforeLongBreak, // Adicionado
+    setCyclesBeforeLongBreak,
     strictMode,
-    setStrictMode, // Adicionado
+    setStrictMode,
     notificationsEnabled,
-    setNotificationsEnabled, // Adicionado
+    setNotificationsEnabled,
     sendNotification,
     sessions,
     setSessions,
@@ -105,7 +105,7 @@ const PomodoroTimer = () => {
     100;
 
   return (
-    <Box p={6} bg="dark.200" borderRadius={8} boxShadow="md">
+    <Box p={6} bg="xpBlue.100" borderRadius={0} boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)">
       <Stack direction="row" justify="space-between" align="center" mb={4}>
         <Text fontSize="3xl" fontWeight="bold">
           {isWorkSession ? "Trabalho" : "Pausa"}
@@ -115,11 +115,16 @@ const PomodoroTimer = () => {
             as={IconButton}
             icon={<SettingsIcon />}
             variant="outline"
-            colorScheme="dark"
+            border="1px solid"
+            borderColor="xpGray.200"
+            bg="xpBlue.300"
+            color="black"
+            boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+            _hover={{ bg: "xpBlue.400" }}
             aria-label="Configurações do Temporizador"
           />
-          <MenuList bg="dark.200" borderColor="dark.300">
-            <MenuItem onClick={() => setIsConfigOpen(true)}>
+          <MenuList bg="xpBlue.100" borderColor="xpGray.200" boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
+            <MenuItem onClick={() => setIsConfigOpen(true)} bg="xpBlue.100">
               Configurar Temporizador
             </MenuItem>
           </MenuList>
@@ -129,14 +134,19 @@ const PomodoroTimer = () => {
         {Math.floor(timeLeft / 60).toString().padStart(2, "0")}:
         {(timeLeft % 60).toString().padStart(2, "0")}
       </Text>
-      <Progress value={progress} colorScheme="blue" size="sm" mb={4} />
+      <Progress value={progress} colorScheme="blue" size="sm" mb={4} bg="xpGray.200" boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)" />
       <Stack direction="row" spacing={4}>
         <Button
           onClick={toggleTimer}
-          colorScheme={isRunning ? "yellow" : "blue"}
+          colorScheme="blue"
           size="lg"
           leftIcon={isRunning ? <>⏸</> : <>▶</>}
           isDisabled={strictMode && isRunning}
+          bg="xpBlue.300"
+          border="1px solid"
+          borderColor="xpGray.200"
+          boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+          _hover={{ bg: "xpBlue.400" }}
         >
           {isRunning ? "Pausar" : "Iniciar"}
         </Button>
@@ -146,28 +156,37 @@ const PomodoroTimer = () => {
           size="lg"
           leftIcon={<>⏹</>}
           isDisabled={strictMode}
+          bg="xpRed.500"
+          border="1px solid"
+          borderColor="xpGray.200"
+          boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+          _hover={{ bg: "#FF4040" }}
         >
           Reiniciar
         </Button>
       </Stack>
 
       <Modal isOpen={isConfigOpen} onClose={handleConfigClose}>
-        <ModalOverlay />
-        <ModalContent bg="dark.200" color="white">
-          <ModalHeader>Configurações do Temporizador</ModalHeader>
-          <ModalCloseButton />
+        <ModalOverlay bg="rgba(0, 0, 0, 0.5)" /> {/* Overlay com opacidade, mas modal sólido */}
+        <ModalContent bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)">
+          <ModalHeader bg="xpBlue.200" color="white" borderBottom="1px solid" borderColor="xpGray.200">
+            Configurações do Temporizador
+          </ModalHeader>
+          <ModalCloseButton color="white" />
           <ModalBody>
             <Stack spacing={4}>
               <Box>
                 <Text mb={2}>Tempo de Trabalho (min):</Text>
                 <NumberInput
                   value={workTime}
-                  onChange={(_, value) => setWorkTime(value)} // Agora definido
+                  onChange={(_, value) => setWorkTime(value)}
                   min={1}
                   max={120}
-                  bg="dark.300"
-                  color="white"
-                  borderRadius={4}
+                  bg="white"
+                  color="xpGray.300"
+                  border="1px solid"
+                  borderColor="xpGray.200"
+                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -180,12 +199,14 @@ const PomodoroTimer = () => {
                 <Text mb={2}>Tempo de Pausa Curta (min):</Text>
                 <NumberInput
                   value={breakTime}
-                  onChange={(_, value) => setBreakTime(value)} // Agora definido
+                  onChange={(_, value) => setBreakTime(value)}
                   min={1}
                   max={60}
-                  bg="dark.300"
-                  color="white"
-                  borderRadius={4}
+                  bg="white"
+                  color="xpGray.300"
+                  border="1px solid"
+                  borderColor="xpGray.200"
+                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -198,12 +219,14 @@ const PomodoroTimer = () => {
                 <Text mb={2}>Tempo de Pausa Longa (min):</Text>
                 <NumberInput
                   value={longBreakTime}
-                  onChange={(_, value) => setLongBreakTime(value)} // Agora definido
+                  onChange={(_, value) => setLongBreakTime(value)}
                   min={1}
                   max={60}
-                  bg="dark.300"
-                  color="white"
-                  borderRadius={4}
+                  bg="white"
+                  color="xpGray.300"
+                  border="1px solid"
+                  borderColor="xpGray.200"
+                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -216,12 +239,14 @@ const PomodoroTimer = () => {
                 <Text mb={2}>Ciclos Antes da Pausa Longa:</Text>
                 <NumberInput
                   value={cyclesBeforeLongBreak}
-                  onChange={(_, value) => setCyclesBeforeLongBreak(value)} // Agora definido
+                  onChange={(_, value) => setCyclesBeforeLongBreak(value)}
                   min={1}
                   max={10}
-                  bg="dark.300"
-                  color="white"
-                  borderRadius={4}
+                  bg="white"
+                  color="xpGray.300"
+                  border="1px solid"
+                  borderColor="xpGray.200"
+                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -232,22 +257,26 @@ const PomodoroTimer = () => {
               </Box>
               <Checkbox
                 isChecked={strictMode}
-                onChange={(e) => setStrictMode(e.target.checked)} // Agora definido
+                onChange={(e) => setStrictMode(e.target.checked)}
                 colorScheme="blue"
+                borderColor="xpGray.200"
+                bg="xpBlue.100"
               >
                 Modo Estrito (sem pausas ou reinícios manuais)
               </Checkbox>
               <Checkbox
                 isChecked={notificationsEnabled}
-                onChange={(e) => setNotificationsEnabled(e.target.checked)} // Agora definido
+                onChange={(e) => setNotificationsEnabled(e.target.checked)}
                 colorScheme="blue"
+                borderColor="xpGray.200"
+                bg="xpBlue.100"
               >
                 Notificações Sonoras
               </Checkbox>
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleConfigClose}>
+            <Button colorScheme="blue" onClick={handleConfigClose} bg="xpBlue.300" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)">
               Salvar
             </Button>
           </ModalFooter>

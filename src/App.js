@@ -1,20 +1,18 @@
-import React, { useState, useEffect, useContext } from "react"; // Certifique-se de importar useContext
+import React, { useState, useEffect, useContext } from "react";
 import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
 import TaskList from "./components/TaskList";
 import AutoTaskGenerator from "./components/AutoTaskGenerator";
-import Settings from "./components/Settings";
-import { AppContext } from "./context/AppContext"; // Importe o AppContext corretamente
+import { AppContext } from "./context/AppContext";
 import { Box, Button, Stack, Text } from "@chakra-ui/react";
 
 const App = () => {
-  const { keyboardShortcuts } = useContext(AppContext); // Agora deve funcionar, pois App está dentro de AppProvider
+  const { keyboardShortcuts } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState("timer");
 
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (document.activeElement.tagName === "INPUT") return;
-
       switch (event.key) {
         case keyboardShortcuts.timer:
           setActiveTab("timer");
@@ -28,9 +26,6 @@ const App = () => {
         case keyboardShortcuts.generator:
           setActiveTab("generator");
           break;
-        case keyboardShortcuts.settings:
-          setActiveTab("settings");
-          break;
         default:
           break;
       }
@@ -40,53 +35,49 @@ const App = () => {
   }, [keyboardShortcuts]);
 
   return (
-    <Box minH="100vh" bg="dark.100" p={6}>
-      <Text fontSize="4xl" fontWeight="bold" textAlign="center" mb={8}>
-        Pomodoro Productivity
-      </Text>
-      <Stack direction="row" justify="center" mb={6} spacing={4}>
+    <Box minH="100vh" bg="xpGray.100" p={6}>
+      <Box
+        bgGradient="linear(to-r, xpBlue.200, xpBlue.300)"
+        p={2}
+        borderBottom="1px solid"
+        borderColor="xpGray.200"
+        boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+      >
+        <Text fontSize="lg" fontWeight="bold" color="white">
+          Pomodoro Productivity
+        </Text>
+      </Box>
+      <Stack direction="row" justify="center" my={4} spacing={2}>
         <Button
           onClick={() => setActiveTab("timer")}
-          colorScheme={activeTab === "timer" ? "blue" : "dark"}
-          variant={activeTab === "timer" ? "solid" : "outline"}
+          bg={activeTab === "timer" ? "xpBlue.400" : "xpBlue.300"}
         >
           Temporizador
         </Button>
         <Button
           onClick={() => setActiveTab("history")}
-          colorScheme={activeTab === "history" ? "blue" : "dark"}
-          variant={activeTab === "history" ? "solid" : "outline"}
+          bg={activeTab === "history" ? "xpBlue.400" : "xpBlue.300"}
         >
           Histórico
         </Button>
         <Button
           onClick={() => setActiveTab("tasks")}
-          colorScheme={activeTab === "tasks" ? "blue" : "dark"}
-          variant={activeTab === "tasks" ? "solid" : "outline"}
+          bg={activeTab === "tasks" ? "xpBlue.400" : "xpBlue.300"}
         >
           Tarefas
         </Button>
         <Button
           onClick={() => setActiveTab("generator")}
-          colorScheme={activeTab === "generator" ? "blue" : "dark"}
-          variant={activeTab === "generator" ? "solid" : "outline"}
+          bg={activeTab === "generator" ? "xpBlue.400" : "xpBlue.300"}
         >
           Gerador
         </Button>
-        <Button
-          onClick={() => setActiveTab("settings")}
-          colorScheme={activeTab === "settings" ? "blue" : "dark"}
-          variant={activeTab === "settings" ? "solid" : "outline"}
-        >
-          Configurações
-        </Button>
       </Stack>
-      <Box maxW="4xl" mx="auto">
+      <Box maxW="4xl" mx="auto" bg="xpBlue.100" p={4} border="1px solid" borderColor="xpGray.200">
         {activeTab === "timer" && <PomodoroTimer />}
         {activeTab === "history" && <SessionHistory />}
         {activeTab === "tasks" && <TaskList />}
         {activeTab === "generator" && <AutoTaskGenerator />}
-        {activeTab === "settings" && <Settings />}
       </Box>
     </Box>
   );
