@@ -44,3 +44,18 @@
     transform: rotate(360deg);
   }
 }
+@media screen and (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+
+  .App-header {
+    min-height: 40px;
+    font-size: 14px;
+    padding: 0 8px;
+  }
+
+  .App-logo {
+    height: 24px;
+  }
+}

@@ -51,51 +51,62 @@ const App = () => {
       p={6}
     >
       <Box
-        w="600px"
+        w={{ base: "95%", md: "600px" }} // Ajuste responsivo
+        maxW="95%"
         bg="xpBlue.100"
         border="2px solid"
         borderColor="xpGray.200"
         boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+        p={2} // Adicionado padding
       >
-        {/* Barra de título estilo XP */}
         <Flex
           bgGradient="linear(to-r, #003087, #0052CC)"
-          p={1}
+          p={{ base: 2, md: 1 }} // Maior padding em telas pequenas
           align="center"
           justify="space-between"
           borderBottom="1px solid"
           borderColor="xpGray.200"
         >
-          <Text fontSize="sm" fontWeight="bold" color="white" ml={2}>
+          <Text fontSize={{ base: "md", md: "sm" }} fontWeight="bold" color="white" ml={2}>
             Pomodoro Productivity
           </Text>
           <Stack direction="row" spacing={1}>
-            <Button size="xs" bg="xpGray.100" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff" _hover={{ bg: "xpGray.200" }}>
-              _
-            </Button>
-            <Button size="xs" bg="xpGray.100" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff" _hover={{ bg: "xpGray.200" }}>
-              □
-            </Button>
-            <Button size="xs" bg="xpRed.500" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff" _hover={{ bg: "xpRed.600" }}>
-              X
-            </Button>
+            <Button size="sm" p={2}>_</Button>
+            <Button size="sm" p={2}>□</Button>
+            <Button size="sm" p={2}>X</Button>
           </Stack>
         </Flex>
-
-        {/* Botões de navegação */}
-        <Stack direction="row" justify="center" my={2} spacing={2} p={2}>
-          <Button onClick={() => setActiveTab("timer")} bg={activeTab === "timer" ? "xpBlue.400" : "xpBlue.300"} size="sm">
+  
+        <Stack direction="row" justify="center" my={2} spacing={2} p={2} flexWrap="wrap">
+          <Button
+            onClick={() => setActiveTab("timer")}
+            bg={activeTab === "timer" ? "xpBlue.400" : "xpBlue.300"}
+            size="md"
+            minWidth="90px" // Para garantir toque fácil
+            p={3}
+          >
             Temporizador
           </Button>
-          <Button onClick={() => setActiveTab("history")} bg={activeTab === "history" ? "xpBlue.400" : "xpBlue.300"} size="sm">
+          <Button
+            onClick={() => setActiveTab("history")}
+            bg={activeTab === "history" ? "xpBlue.400" : "xpBlue.300"}
+            size="md"
+            minWidth="90px"
+            p={3}
+          >
             Histórico
           </Button>
-          <Button onClick={() => setActiveTab("tasks")} bg={activeTab === "tasks" ? "xpBlue.400" : "xpBlue.300"} size="sm">
+          <Button
+            onClick={() => setActiveTab("tasks")}
+            bg={activeTab === "tasks" ? "xpBlue.400" : "xpBlue.300"}
+            size="md"
+            minWidth="90px"
+            p={3}
+          >
             Tarefas
           </Button>
         </Stack>
-
-        {/* Área de conteúdo */}
+  
         <Box p={4} bg="xpBlue.100" borderTop="1px solid" borderColor="xpGray.200">
           {activeTab === "timer" && <PomodoroTimer />}
           {activeTab === "history" && <SessionHistory />}
@@ -104,6 +115,7 @@ const App = () => {
       </Box>
     </Box>
   );
+  
 };
 
 export default App;
