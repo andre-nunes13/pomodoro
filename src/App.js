@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
 import TaskList from "./components/TaskList";
-import AutoTaskGenerator from "./components/AutoTaskGenerator";
 import { AppContext } from "./context/AppContext";
 import { Box, Button, Stack, Text } from "@chakra-ui/react";
 
@@ -22,9 +21,6 @@ const App = () => {
           break;
         case keyboardShortcuts.tasks:
           setActiveTab("tasks");
-          break;
-        case keyboardShortcuts.generator:
-          setActiveTab("generator");
           break;
         default:
           break;
@@ -66,18 +62,11 @@ const App = () => {
         >
           Tarefas
         </Button>
-        <Button
-          onClick={() => setActiveTab("generator")}
-          bg={activeTab === "generator" ? "xpBlue.400" : "xpBlue.300"}
-        >
-          Gerador
-        </Button>
       </Stack>
       <Box maxW="4xl" mx="auto" bg="xpBlue.100" p={4} border="1px solid" borderColor="xpGray.200">
         {activeTab === "timer" && <PomodoroTimer />}
         {activeTab === "history" && <SessionHistory />}
         {activeTab === "tasks" && <TaskList />}
-        {activeTab === "generator" && <AutoTaskGenerator />}
       </Box>
     </Box>
   );

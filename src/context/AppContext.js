@@ -27,18 +27,7 @@ export const AppProvider = ({ children }) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     JSON.parse(localStorage.getItem("notificationsEnabled")) || true
   );
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "dark"
-  );
-  const [keyboardShortcuts, setKeyboardShortcuts] = useState(
-    JSON.parse(localStorage.getItem("keyboardShortcuts")) || {
-      timer: "t",
-      history: "h",
-      tasks: "l",
-      generator: "g",
-      settings: "s",
-    }
-  );
+  const [activeTab, setActiveTab] = useState("timer"); // Mantido por compatibilidade, mas não usado no PomodoroTimer
 
   useEffect(() => {
     localStorage.setItem("workTime", workTime);
@@ -49,9 +38,7 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
     localStorage.setItem("strictMode", JSON.stringify(strictMode));
     localStorage.setItem("notificationsEnabled", JSON.stringify(notificationsEnabled));
-    localStorage.setItem("theme", theme);
-    localStorage.setItem("keyboardShortcuts", JSON.stringify(keyboardShortcuts));
-  }, [workTime, breakTime, longBreakTime, cyclesBeforeLongBreak, sessions, tasks, strictMode, notificationsEnabled, theme, keyboardShortcuts]);
+  }, [workTime, breakTime, longBreakTime, cyclesBeforeLongBreak, sessions, tasks, strictMode, notificationsEnabled]);
 
   const sendNotification = (title, options) => {
     if (notificationsEnabled && Notification.permission === "granted") {
@@ -84,10 +71,8 @@ export const AppProvider = ({ children }) => {
         setStrictMode,
         notificationsEnabled,
         setNotificationsEnabled,
-        theme,
-        setTheme,
-        keyboardShortcuts,
-        setKeyboardShortcuts,
+        activeTab, // Mantido por compatibilidade, mas não usado no PomodoroTimer
+        setActiveTab, // Mantido por compatibilidade, mas não usado no PomodoroTimer
         sendNotification,
       }}
     >
