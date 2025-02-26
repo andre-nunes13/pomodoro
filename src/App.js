@@ -32,6 +32,15 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [keyboardShortcuts]);
 
+  // Aplica os cursores dinamicamente
+  useEffect(() => {
+    document.body.style.cursor = "url('/xp-cursor.cur'), pointer";
+
+    document.querySelectorAll("button").forEach((btn) => {
+      btn.style.cursor = "url('/xp-pointer.cur'), grab";
+    });
+  }, []);
+
   return (
     <Box
       minH="100vh"
@@ -42,15 +51,15 @@ const App = () => {
       p={6}
     >
       <Box
-        w="600px" /* Largura fixa para imitar uma janela */
+        w="600px"
         bg="xpBlue.100"
         border="2px solid"
         borderColor="xpGray.200"
-        boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)" /* Sombra externa */
+        boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
       >
         {/* Barra de título estilo XP */}
         <Flex
-          bgGradient="linear(to-r, #003087, #0052CC)" /* Gradiente azul do XP */
+          bgGradient="linear(to-r, #003087, #0052CC)"
           p={1}
           align="center"
           justify="space-between"
@@ -61,34 +70,13 @@ const App = () => {
             Pomodoro Productivity
           </Text>
           <Stack direction="row" spacing={1}>
-            <Button
-              size="xs"
-              bg="xpGray.100"
-              border="1px solid"
-              borderColor="xpGray.200"
-              boxShadow="inset 1px 1px #fff"
-              _hover={{ bg: "xpGray.200" }}
-            >
+            <Button size="xs" bg="xpGray.100" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff" _hover={{ bg: "xpGray.200" }}>
               _
             </Button>
-            <Button
-              size="xs"
-              bg="xpGray.100"
-              border="1px solid"
-              borderColor="xpGray.200"
-              boxShadow="inset 1px 1px #fff"
-              _hover={{ bg: "xpGray.200" }}
-            >
+            <Button size="xs" bg="xpGray.100" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff" _hover={{ bg: "xpGray.200" }}>
               □
             </Button>
-            <Button
-              size="xs"
-              bg="xpRed.500"
-              border="1px solid"
-              borderColor="xpGray.200"
-              boxShadow="inset 1px 1px #fff"
-              _hover={{ bg: "xpRed.600" }}
-            >
+            <Button size="xs" bg="xpRed.500" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff" _hover={{ bg: "xpRed.600" }}>
               X
             </Button>
           </Stack>
@@ -96,25 +84,13 @@ const App = () => {
 
         {/* Botões de navegação */}
         <Stack direction="row" justify="center" my={2} spacing={2} p={2}>
-          <Button
-            onClick={() => setActiveTab("timer")}
-            bg={activeTab === "timer" ? "xpBlue.400" : "xpBlue.300"}
-            size="sm"
-          >
+          <Button onClick={() => setActiveTab("timer")} bg={activeTab === "timer" ? "xpBlue.400" : "xpBlue.300"} size="sm">
             Temporizador
           </Button>
-          <Button
-            onClick={() => setActiveTab("history")}
-            bg={activeTab === "history" ? "xpBlue.400" : "xpBlue.300"}
-            size="sm"
-          >
+          <Button onClick={() => setActiveTab("history")} bg={activeTab === "history" ? "xpBlue.400" : "xpBlue.300"} size="sm">
             Histórico
           </Button>
-          <Button
-            onClick={() => setActiveTab("tasks")}
-            bg={activeTab === "tasks" ? "xpBlue.400" : "xpBlue.300"}
-            size="sm"
-          >
+          <Button onClick={() => setActiveTab("tasks")} bg={activeTab === "tasks" ? "xpBlue.400" : "xpBlue.300"} size="sm">
             Tarefas
           </Button>
         </Stack>
