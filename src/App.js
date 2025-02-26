@@ -3,7 +3,7 @@ import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
 import TaskList from "./components/TaskList";
 import { AppContext } from "./context/AppContext";
-import { Box, Button, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Stack, Text, Flex } from "@chakra-ui/react";
 
 const App = () => {
   const { keyboardShortcuts } = useContext(AppContext);
@@ -12,7 +12,6 @@ const App = () => {
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (document.activeElement.tagName === "INPUT") return;
-      // Defensive check to ensure keyboardShortcuts exists
       if (!keyboardShortcuts) return;
 
       switch (event.key) {
@@ -34,42 +33,98 @@ const App = () => {
   }, [keyboardShortcuts]);
 
   return (
-    <Box minH="100vh" bg="xpGray.100" p={6}>
+    <Box
+      minH="100vh"
+      bg="xpGray.100"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={6}
+    >
       <Box
-        bgGradient="linear(to-r, xpBlue.200, xpBlue.300)"
-        p={2}
-        borderBottom="1px solid"
+        w="600px" /* Largura fixa para imitar uma janela */
+        bg="xpBlue.100"
+        border="2px solid"
         borderColor="xpGray.200"
-        boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+        boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)" /* Sombra externa */
       >
-        <Text fontSize="lg" fontWeight="bold" color="white">
-          Pomodoro Productivity
-        </Text>
-      </Box>
-      <Stack direction="row" justify="center" my={4} spacing={2}>
-        <Button
-          onClick={() => setActiveTab("timer")}
-          bg={activeTab === "timer" ? "xpBlue.400" : "xpBlue.300"}
+        {/* Barra de título estilo XP */}
+        <Flex
+          bgGradient="linear(to-r, #003087, #0052CC)" /* Gradiente azul do XP */
+          p={1}
+          align="center"
+          justify="space-between"
+          borderBottom="1px solid"
+          borderColor="xpGray.200"
         >
-          Temporizador
-        </Button>
-        <Button
-          onClick={() => setActiveTab("history")}
-          bg={activeTab === "history" ? "xpBlue.400" : "xpBlue.300"}
-        >
-          Histórico
-        </Button>
-        <Button
-          onClick={() => setActiveTab("tasks")}
-          bg={activeTab === "tasks" ? "xpBlue.400" : "xpBlue.300"}
-        >
-          Tarefas
-        </Button>
-      </Stack>
-      <Box maxW="4xl" mx="auto" bg="xpBlue.100" p={4} border="1px solid" borderColor="xpGray.200">
-        {activeTab === "timer" && <PomodoroTimer />}
-        {activeTab === "history" && <SessionHistory />}
-        {activeTab === "tasks" && <TaskList />}
+          <Text fontSize="sm" fontWeight="bold" color="white" ml={2}>
+            Pomodoro Productivity
+          </Text>
+          <Stack direction="row" spacing={1}>
+            <Button
+              size="xs"
+              bg="xpGray.100"
+              border="1px solid"
+              borderColor="xpGray.200"
+              boxShadow="inset 1px 1px #fff"
+              _hover={{ bg: "xpGray.200" }}
+            >
+              _
+            </Button>
+            <Button
+              size="xs"
+              bg="xpGray.100"
+              border="1px solid"
+              borderColor="xpGray.200"
+              boxShadow="inset 1px 1px #fff"
+              _hover={{ bg: "xpGray.200" }}
+            >
+              □
+            </Button>
+            <Button
+              size="xs"
+              bg="xpRed.500"
+              border="1px solid"
+              borderColor="xpGray.200"
+              boxShadow="inset 1px 1px #fff"
+              _hover={{ bg: "xpRed.600" }}
+            >
+              X
+            </Button>
+          </Stack>
+        </Flex>
+
+        {/* Botões de navegação */}
+        <Stack direction="row" justify="center" my={2} spacing={2} p={2}>
+          <Button
+            onClick={() => setActiveTab("timer")}
+            bg={activeTab === "timer" ? "xpBlue.400" : "xpBlue.300"}
+            size="sm"
+          >
+            Temporizador
+          </Button>
+          <Button
+            onClick={() => setActiveTab("history")}
+            bg={activeTab === "history" ? "xpBlue.400" : "xpBlue.300"}
+            size="sm"
+          >
+            Histórico
+          </Button>
+          <Button
+            onClick={() => setActiveTab("tasks")}
+            bg={activeTab === "tasks" ? "xpBlue.400" : "xpBlue.300"}
+            size="sm"
+          >
+            Tarefas
+          </Button>
+        </Stack>
+
+        {/* Área de conteúdo */}
+        <Box p={4} bg="xpBlue.100" borderTop="1px solid" borderColor="xpGray.200">
+          {activeTab === "timer" && <PomodoroTimer />}
+          {activeTab === "history" && <SessionHistory />}
+          {activeTab === "tasks" && <TaskList />}
+        </Box>
       </Box>
     </Box>
   );
