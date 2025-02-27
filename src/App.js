@@ -1,22 +1,20 @@
-// File: /src/App.js
 import React, { useState, useEffect, useContext, useRef } from "react";
 import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
 import TaskList from "./components/TaskList";
+import Taskbar from "./components/Taskbar";
 import { AppContext } from "./context/AppContext";
 import { Box, Button, Stack, Text, Flex } from "@chakra-ui/react";
 
 const App = () => {
-  const { keyboardShortcuts } = useContext(AppContext);
-  const [activeTab, setActiveTab] = useState("timer");
-  const [position, setPosition] = useState({ x: 50, y: 50 }); // Posição inicial
+  const { keyboardShortcuts, activeTab, setActiveTab } = useContext(AppContext);
+  const [position, setPosition] = useState({ x: 50, y: 50 });
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const dragRef = useRef(null);
 
-  // Define a largura do container com base na aba ativa
-  const containerWidth =
-    activeTab === "history"
-      ? { base: "95%", md: "900px" }
-      : { base: "95%", md: "640px" };
+  const containerWidth = { base: "95%", md: "640px" };
+  const openApps = [{ id: "focusxp", title: "FOCUSXP", icon: "/focusxp-icon.png" }];
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -39,17 +37,16 @@ const App = () => {
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [keyboardShortcuts]);
+  }, [keyboardShortcuts, setActiveTab]);
 
   useEffect(() => {
     document.body.style.cursor = "url('/xp-cursor.cur'), pointer";
     document.querySelectorAll("button").forEach((btn) => {
       btn.style.cursor = "url('/xp-pointer.cur'), pointer";
     });
-    document.body.style.overflow = "hidden"; // Bloqueia a barra de scroll
+    document.body.style.overflow = "hidden";
   }, []);
 
-  // Lógica de arrastar
   const handleMouseDown = (e) => {
     if (dragRef.current && (e.target === dragRef.current || dragRef.current.contains(e.target))) {
       const startX = e.clientX - position.x;
@@ -73,149 +70,169 @@ const App = () => {
     }
   };
 
+  const handleStartClick = () => {
+    console.log("Abrir menu Iniciar");
+  };
+
+  const handleAppClick = () => {
+    setIsMinimized(false); // Restaura a janela ao clicar na Taskbar
+  };
+
+  const handleMinimize = () => setIsMinimized(true);
+  const handleMaximizeRestore = () => {
+    setIsMaximized(!isMaximized);
+    if (!isMaximized) {
+      setPosition({ x: 0, y: 0 }); // Move para o topo ao maximizar
+    } else {
+      setPosition({ x: 50, y: 50 }); // Restaura para a posição original ao desmaximizar
+    }
+  };
+  const handleClose = () => setIsMinimized(true); // Simula fechamento
+
   return (
-    <Box
-      minH="100vh"
-      bg="xpGray.100"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      p={6}
-      fontFamily="MS Sans Serif"
-    >
-      <Box
-        w={containerWidth}
-        maxW="95%"
-        bg="xpBlue.100"
-        border="2px solid"
-        borderColor="xpGray.200"
-        boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
-        position="absolute"
-        left={position.x}
-        top={position.y}
-        style={{ transition: "transform 0.1s ease" }}
-      >
-        {/* Barra de título */}
-        <Flex
-          ref={dragRef}
-          onMouseDown={handleMouseDown}
-          bgGradient="linear(to-r, xpBlue.200, xpBlue.300)"
-          p={1}
-          align="center"
-          justify="space-between"
-          borderBottom="1px solid"
-          borderColor="xpGray.200"
-          boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
-          cursor="move"
-          userSelect="none"
+    <Box minH="100vh" bg="#D4D0C8" display="flex" flexDirection="column">
+      {!isMinimized && (
+        <Box
+          w={isMaximized ? "100%" : containerWidth}
+          h={isMaximized ? "100vh" : "auto"}
+          position={isMaximized ? "fixed" : "absolute"}
+          top={isMaximized ? 0 : position.y}
+          left={isMaximized ? 0 : position.x}
+          bg="#ECE9D8"
+          border="2px solid"
+          borderColor="#808080"
+          boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+          style={{ transition: "all 0.3s ease" }}
         >
-          <Flex align="center">
-            <Box
-              as="img"
-              src="/xp-icon.png"
-              alt="XP Icon"
-              w="16px"
-              h="16px"
-              mr={2}
-              ml={1}
-            />
-            <Text fontSize="sm" fontWeight="bold" color="white">
-              Pomodoro Productivity
-            </Text>
-          </Flex>
-          <Stack direction="row" spacing={0}>
-            <Button
-              size="xs"
-              minW="20px"
-              h="20px"
-              variant="actionGreen"
-              border="1px solid"
-              borderColor="xpGray.200"
-              boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
-              _hover={{ bg: "xpBlue.400" }}
-              fontSize="12px"
-              p={0}
-            >
-              _
-            </Button>
-            <Button
-              size="xs"
-              minW="20px"
-              h="20px"
-              variant="actionGreen"
-              border="1px solid"
-              borderColor="xpGray.200"
-              boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
-              _hover={{ bg: "xpBlue.400" }}
-              fontSize="12px"
-              p={0}
-            >
-              □
-            </Button>
-            <Button
-              size="xs"
-              minW="20px"
-              h="20px"
-              variant="actionRed"
-              border="1px solid"
-              borderColor="xpGray.200"
-              boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
-              _hover={{ bg: "xpRed.600" }}
-              fontSize="12px"
-              p={0}
-            >
-              X
-            </Button>
-          </Stack>
-        </Flex>
-
-        {/* Conteúdo interno */}
-        <Box position="relative" p={4} bg="xpBlue.100">
-          <Stack
-            direction="row"
-            justify="center"
-            my={2}
-            spacing={1}
-            p={2}
-            bg="xpGray.100"
+          <Flex
+            ref={dragRef}
+            onMouseDown={handleMouseDown}
+            bgGradient="linear(to-r, #003087, #0052CC)"
+            p={1}
+            align="center"
+            justify="space-between"
             borderBottom="1px solid"
-            borderColor="xpGray.200"
+            borderColor="#808080"
             boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
+            cursor="move"
+            userSelect="none"
           >
-            {["timer", "history", "tasks"].map((tab) => (
+            <Text
+              fontSize="sm"
+              fontWeight="bold"
+              color="white"
+              fontFamily="'MS Sans Serif', Tahoma, sans-serif"
+            >
+              FOCUSXP
+            </Text>
+            <Stack direction="row" spacing={0}>
               <Button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                variant={activeTab === tab ? "active" : "base"}
-                size="sm"
-                minW="100px"
+                size="xs"
+                minW="20px"
+                h="20px"
+                bg="#008000"
+                color="white"
                 border="1px solid"
-                borderColor="xpGray.200"
-                boxShadow={
-                  activeTab === tab
-                    ? "inset 1px 1px #fff"
-                    : "inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
-                }
-                _hover={{ bg: "xpBlue.400" }}
-                textTransform="capitalize"
-                fontWeight="normal"
+                borderColor="#808080"
+                boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
+                _hover={{ bg: "#006400" }}
+                fontSize="12px"
+                p={0}
+                onClick={handleMinimize}
               >
-                {tab === "timer"
-                  ? "Temporizador"
-                  : tab === "history"
-                  ? "Histórico"
-                  : "Tarefas"}
+                _
               </Button>
-            ))}
-          </Stack>
+              <Button
+                size="xs"
+                minW="20px"
+                h="20px"
+                bg="#008000"
+                color="white"
+                border="1px solid"
+                borderColor="#808080"
+                boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
+                _hover={{ bg: "#006400" }}
+                fontSize="12px"
+                p={0}
+                onClick={handleMaximizeRestore}
+              >
+                {isMaximized ? "□" : "□"}
+              </Button>
+              <Button
+                size="xs"
+                minW="20px"
+                h="20px"
+                bg="#C00000"
+                color="white"
+                border="1px solid"
+                borderColor="#808080"
+                boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
+                _hover={{ bg: "#A00000" }}
+                fontSize="12px"
+                p={0}
+                onClick={handleClose}
+              >
+                X
+              </Button>
+            </Stack>
+          </Flex>
 
-          <Box>
-            {activeTab === "timer" && <PomodoroTimer />}
-            {activeTab === "history" && <SessionHistory />}
-            {activeTab === "tasks" && <TaskList />}
+          <Box position="relative" p={4} bg="#ECE9D8">
+            <Stack
+              direction="row"
+              justify="center"
+              my={2}
+              spacing={1}
+              p={2}
+              bg="#D4D0C8"
+              borderBottom="1px solid"
+              borderColor="#808080"
+              boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
+            >
+              {["timer", "history", "tasks"].map((tab) => (
+                <Button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  bg={activeTab === tab ? "#D4D0C8" : "#ECE9D8"}
+                  color="#000000"
+                  size="sm"
+                  minW="100px"
+                  border="1px solid"
+                  borderColor="#808080"
+                  boxShadow={
+                    activeTab === tab
+                      ? "inset 1px 1px #fff"
+                      : "inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+                  }
+                  _hover={{ bg: "#D4D0C8" }}
+                  textTransform="capitalize"
+                  fontWeight="normal"
+                  fontFamily="'MS Sans Serif', Tahoma, sans-serif"
+                  fontSize="12px"
+                >
+                  {tab === "timer"
+                    ? "Temporizador"
+                    : tab === "history"
+                    ? "Histórico"
+                    : "Tarefas"}
+                </Button>
+              ))}
+            </Stack>
+
+            <Box>
+              {activeTab === "timer" && <PomodoroTimer />}
+              {activeTab === "history" && <SessionHistory />}
+              {activeTab === "tasks" && <TaskList />}
+            </Box>
           </Box>
         </Box>
-      </Box>
+      )}
+
+      <Taskbar
+        openApps={openApps}
+        onStartClick={handleStartClick}
+        onAppClick={handleAppClick}
+      />
     </Box>
   );
 };
