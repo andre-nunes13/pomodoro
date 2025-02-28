@@ -27,7 +27,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const SessionHistory = () => {
-  const { sessions, setSessions } = useContext(AppContext);
+  const { sessions, setSessions, t } = useContext(AppContext);
   const [filter, setFilter] = useState("all");
 
   const filterSessions = () => {
@@ -50,7 +50,6 @@ const SessionHistory = () => {
 
   const filteredSessions = filterSessions();
 
-  // Estatísticas
   const totalWorkHours = filteredSessions
     .filter((s) => s.type === "Trabalho")
     .reduce((acc, session) => acc + session.duration / 60, 0);
@@ -59,12 +58,11 @@ const SessionHistory = () => {
     ? filteredSessions.reduce((acc, s) => acc + s.duration, 0) / filteredSessions.length / 60
     : 0;
 
-  // Dados para o gráfico
   const chartData = {
     labels: filteredSessions.map((s) => s.date),
     datasets: [
       {
-        label: "Duração (min)",
+        label: t("Duration (min)"),
         data: filteredSessions.map((s) => s.duration),
         backgroundColor: filteredSessions.map((s) =>
           s.type === "Trabalho" ? "rgba(54, 162, 235, 0.6)" : "rgba(255, 99, 132, 0.6)"
@@ -82,16 +80,16 @@ const SessionHistory = () => {
     maintainAspectRatio: false,
     plugins: {
       legend: { position: "top" },
-      title: { display: true, text: "Histórico de Sessões" },
+      title: { display: true, text: t("Session History") },
     },
     scales: {
-      y: { beginAtZero: true, title: { display: true, text: "Duração (min)" } },
-      x: { title: { display: true, text: "Data" } },
+      y: { beginAtZero: true, title: { display: true, text: t("Duration (min)") } },
+      x: { title: { display: true, text: t("Date") } },
     },
   };
 
   const exportToCSV = () => {
-    const headers = "Data,Duração (min),Categoria,Tipo\n";
+    const headers = `${t("Date")},${t("Duration (min)")},${t("Category")},${t("Type")}\n`;
     const rows = filteredSessions
       .map((s) => `${s.date},${s.duration},${s.category},${s.type}`)
       .join("\n");
@@ -117,15 +115,18 @@ const SessionHistory = () => {
       border="1px solid"
       borderColor="xpGray.200"
       boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
-      h="calc(100vh - 30px)" // Altura total menos a Taskbar
+      h="calc(100vh - 30px)"
       maxH="calc(100vh - 30px)"
-      w={{ base: "100%", md: "80vw", lg: "60vw" }} // Largura responsiva: 100% em mobile, 80% em médio, 60% em grande
-      maxW="800px" // Largura máxima fixa
+      w={{ base: "100%", md: "80vw", lg: "60vw" }}
+      maxW="800px"
       overflowY="auto"
       position="relative"
-      mx="auto" // Centraliza horizontalmente
+      mx="auto"
     >
-      {/* Filtro */}
+      <Text fontSize="2xl" fontWeight="bold" mb={4} color="xpGray.300">
+        {t("Session History")}
+      </Text>
+
       <Select
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
@@ -137,19 +138,23 @@ const SessionHistory = () => {
         boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
         maxW="200px"
       >
-        <option value="all">Todos</option>
-        <option value="week">Última Semana</option>
-        <option value="month">Último Mês</option>
+        <option value="all">{t("All")}</option>
+        <option value="week">{t("Last Week")}</option>
+        <option value="month">{t("Last Month")}</option>
       </Select>
 
-      {/* Estatísticas */}
       <Stack spacing={2} mb={4}>
-        <Text color="xpGray.300">Total de Horas Trabalhadas: {totalWorkHours.toFixed(2)} h</Text>
-        <Text color="xpGray.300">Ciclos Concluídos: {totalCycles}</Text>
-        <Text color="xpGray.300">Duração Média por Sessão: {avgSessionDuration.toFixed(2)} min</Text>
+        <Text color="xpGray.300">
+          {t("Total Work Hours")}: {totalWorkHours.toFixed(2)} h
+        </Text>
+        <Text color="xpGray.300">
+          {t("Completed Cycles")}: {totalCycles}
+        </Text>
+        <Text color="xpGray.300">
+          {t("Average Session Duration")}: {avgSessionDuration.toFixed(2)} min
+        </Text>
       </Stack>
 
-      {/* Gráfico */}
       <Box
         mb={4}
         h="40vh"
@@ -161,22 +166,21 @@ const SessionHistory = () => {
         <Bar data={chartData} options={chartOptions} />
       </Box>
 
-      {/* Tabela */}
       <Box
         h="40vh"
         maxH="40vh"
         overflowY="auto"
         border="1px solid"
         borderColor="xpGray.200"
-        mb={16} // Espaço extra para os botões (maior que a altura dos botões + margem)
+        mb={16}
       >
         <Table variant="simple" size="sm">
           <Thead position="sticky" top={0} bg="xpBlue.200" zIndex={1}>
             <Tr>
-              <Th color="white">Data</Th>
-              <Th color="white">Duração (min)</Th>
-              <Th color="white">Categoria</Th>
-              <Th color="white">Tipo</Th>
+              <Th color="white">{t("Date")}</Th>
+              <Th color="white">{t("Duration (min)")}</Th>
+              <Th color="white">{t("Category")}</Th>
+              <Th color="white">{t("Type")}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -185,21 +189,20 @@ const SessionHistory = () => {
                 <Td>{session.date}</Td>
                 <Td>{session.duration}</Td>
                 <Td>{session.category}</Td>
-                <Td>{session.type}</Td>
+                <Td>{t(session.type)}</Td>
               </Tr>
             ))}
           </Tbody>
         </Table>
       </Box>
 
-      {/* Botões */}
       <Stack
         direction="row"
         spacing={4}
-        position="absolute" // Posicionamento absoluto para evitar sobreposição
-        bottom={4} // Ajustado para ficar acima da Taskbar
+        position="absolute"
+        bottom={4}
         left="50%"
-        transform="translateX(-50%)" // Centraliza horizontalmente
+        transform="translateX(-50%)"
         zIndex={2}
       >
         <Button
@@ -210,9 +213,9 @@ const SessionHistory = () => {
           boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
           _hover={{ bg: "xpBlue.400" }}
           isDisabled={filteredSessions.length === 0}
-          size="sm" // Reduz o tamanho para melhor ajuste
+          size="sm"
         >
-          Exportar como CSV
+          {t("Export as CSV")}
         </Button>
         <Button
           onClick={clearHistory}
@@ -222,9 +225,9 @@ const SessionHistory = () => {
           boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
           _hover={{ bg: "#FF4040" }}
           isDisabled={filteredSessions.length === 0}
-          size="sm" // Reduz o tamanho
+          size="sm"
         >
-          Limpar Histórico
+          {t("Clear History")}
         </Button>
       </Stack>
     </Box>

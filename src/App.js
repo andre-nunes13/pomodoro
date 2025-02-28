@@ -3,13 +3,14 @@ import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
 import TaskList from "./components/TaskList";
 import Achievements from "./components/Achievements";
+import Settings from "./components/Settings"; // Importar Settings
 import StickyNote from "./components/StickyNote";
 import Taskbar from "./components/Taskbar";
 import { AppContext } from "./context/AppContext";
 import { Box, Button, Stack, Text, Flex } from "@chakra-ui/react";
 
 const App = () => {
-  const { keyboardShortcuts, activeTab, setActiveTab } = useContext(AppContext);
+  const { keyboardShortcuts, activeTab, setActiveTab, t } = useContext(AppContext);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 });
   const [isMinimized, setIsMinimized] = useState(false);
@@ -20,7 +21,7 @@ const App = () => {
 
   const containerWidth = { base: "95%", md: "640px" };
   const openApps = [
-    { id: "focusxp", title: "FOCUSXP", icon: "/focusxp-icon.png" },
+    { id: "focusxp", title: t("FOCUSXP"), icon: "/focusxp-icon.png" },
     { id: "stickynote", title: "Sticky Note", icon: "/sticky-icon.png" },
   ];
 
@@ -172,7 +173,7 @@ const App = () => {
               color="white"
               fontFamily="'MS Sans Serif', Tahoma, sans-serif"
             >
-              FOCUSXP
+              {t("FOCUSXP")}
             </Text>
             <Stack direction="row" spacing={0}>
               <Button
@@ -238,7 +239,7 @@ const App = () => {
               borderColor="#808080"
               boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
             >
-              {["timer", "history", "tasks", "achievements"].map((tab) => (
+              {["timer", "history", "tasks", "achievements", "settings"].map((tab) => (
                 <Button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -259,13 +260,7 @@ const App = () => {
                   fontFamily="'MS Sans Serif', Tahoma, sans-serif"
                   fontSize="12px"
                 >
-                  {tab === "timer"
-                    ? "Temporizador"
-                    : tab === "history"
-                    ? "Histórico"
-                    : tab === "tasks"
-                    ? "Tarefas"
-                    : "Conquistas"}
+                  {t(tab.charAt(0).toUpperCase() + tab.slice(1))}
                 </Button>
               ))}
             </Stack>
@@ -275,6 +270,7 @@ const App = () => {
               {activeTab === "history" && <SessionHistory />}
               {activeTab === "tasks" && <TaskList />}
               {activeTab === "achievements" && <Achievements />}
+              {activeTab === "settings" && <Settings />}
             </Box>
           </Box>
         </Box>
