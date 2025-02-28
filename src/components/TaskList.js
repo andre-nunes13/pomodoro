@@ -31,7 +31,7 @@ const TaskList = () => {
   const [editText, setEditText] = useState("");
   const [taskCategory, setTaskCategory] = useState("Estudo");
   const [taskPriority, setTaskPriority] = useState("Média");
-  const [isAddOpen, setIsAddOpen] = useState(false); // Novo modal para adicionar tarefas manualmente
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [isGenerateOpen, setIsGenerateOpen] = useState(false);
   const [generateTopic, setGenerateTopic] = useState("");
   const [generateQuantity, setGenerateQuantity] = useState(5);
@@ -39,7 +39,6 @@ const TaskList = () => {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState(new Set());
 
-  // Inicialize o Gemini API com a chave do ambiente
   const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY || "");
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
@@ -65,7 +64,7 @@ const TaskList = () => {
       setNewTask("");
       setTaskCategory("Estudo");
       setTaskPriority("Média");
-      setIsAddOpen(false); // Fecha o modal após adicionar
+      setIsAddOpen(false);
     }
   };
 
@@ -210,87 +209,97 @@ const TaskList = () => {
           />
         </Stack>
       </Stack>
-      <Stack spacing={2}>
-        {tasks.map((task) => (
-          <Box
-            key={task.id}
-            display="flex"
-            alignItems="center"
-            p={2}
-            bg="xpBlue.100"
-            border="1px solid"
-            borderColor="xpGray.200"
-            boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
-          >
-            <Checkbox
-              isChecked={task.completed}
-              onChange={() => toggleTaskCompletion(task.id)}
-              mr={2}
-              borderColor="xpGray.200"
+      {/* Adicionando um contêiner com altura máxima e barra de rolagem */}
+      <Box
+        maxH="400px" // Define uma altura máxima para a lista de tarefas
+        overflowY="auto" // Ativa a barra de rolagem vertical quando necessário
+        border="1px solid" // Adiciona uma borda para delimitar a área rolável
+        borderColor="xpGray.200"
+        bg="xpBlue.100"
+        p={2}
+      >
+        <Stack spacing={2}>
+          {tasks.map((task) => (
+            <Box
+              key={task.id}
+              display="flex"
+              alignItems="center"
+              p={2}
               bg="xpBlue.100"
-              isDisabled={isLoading}
-            />
-            {editingTask === task.id ? (
-              <Stack direction="row" flex={1}>
-                <Input
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  bg="white"
-                  color="xpGray.300"
-                  border="1px solid"
-                  borderColor="xpGray.200"
-                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
-                  flex={1}
-                  isDisabled={isLoading}
-                />
-                <Button
-                  onClick={() => saveEdit(task.id)}
-                  colorScheme="blue"
-                  bg="xpBlue.300"
+              border="1px solid"
+              borderColor="xpGray.200"
+              boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+            >
+              <Checkbox
+                isChecked={task.completed}
+                onChange={() => toggleTaskCompletion(task.id)}
+                mr={2}
+                borderColor="xpGray.200"
+                bg="xpBlue.100"
+                isDisabled={isLoading}
+              />
+              {editingTask === task.id ? (
+                <Stack direction="row" flex={1}>
+                  <Input
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    bg="white"
+                    color="xpGray.300"
+                    border="1px solid"
+                    borderColor="xpGray.200"
+                    boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
+                    flex={1}
+                    isDisabled={isLoading}
+                  />
+                  <Button
+                    onClick={() => saveEdit(task.id)}
+                    colorScheme="blue"
+                    bg="xpBlue.300"
+                    border="1px solid"
+                    borderColor="xpGray.200"
+                    boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
+                    size="sm"
+                    _hover={{ bg: "xpBlue.400" }}
+                    isDisabled={isLoading}
+                  >
+                    Salvar
+                  </Button>
+                </Stack>
+              ) : (
+                <Text flex={1} className={task.completed ? "line-through text-gray-500" : ""}>
+                  {task.description} (Cat: {task.category}, Pri: {task.priority})
+                </Text>
+              )}
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<EditIcon />}
+                  variant="ghost"
+                  bg="xpBlue.100"
                   border="1px solid"
                   borderColor="xpGray.200"
                   boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
-                  size="sm"
-                  _hover={{ bg: "xpBlue.400" }}
                   isDisabled={isLoading}
-                >
-                  Salvar
-                </Button>
-              </Stack>
-            ) : (
-              <Text flex={1} className={task.completed ? "line-through text-gray-500" : ""}>
-                {task.description} (Cat: {task.category}, Pri: {task.priority})
-              </Text>
-            )}
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                icon={<EditIcon />}
-                variant="ghost"
-                bg="xpBlue.100"
-                border="1px solid"
-                borderColor="xpGray.200"
-                boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
-                isDisabled={isLoading}
-              />
-              <MenuList bg="xpBlue.100" borderColor="xpGray.200" boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
-                <MenuItem onClick={() => editTask(task)} bg="xpBlue.100" icon={<EditIcon />} isDisabled={isLoading}>
-                  Editar
-                </MenuItem>
-                <MenuItem
-                  onClick={() => deleteTask(task.id)}
-                  bg="xpBlue.100"
-                  icon={<DeleteIcon />}
-                  color="xpRed.500"
-                  isDisabled={isLoading}
-                >
-                  Excluir
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Box>
-        ))}
-      </Stack>
+                />
+                <MenuList bg="xpBlue.100" borderColor="xpGray.200" boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
+                  <MenuItem onClick={() => editTask(task)} bg="xpBlue.100" icon={<EditIcon />} isDisabled={isLoading}>
+                    Editar
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => deleteTask(task.id)}
+                    bg="xpBlue.100"
+                    icon={<DeleteIcon />}
+                    color="xpRed.500"
+                    isDisabled={isLoading}
+                  >
+                    Excluir
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
+          ))}
+        </Stack>
+      </Box>
 
       {/* Modal para Adicionar Tarefa Manualmente */}
       <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)}>
