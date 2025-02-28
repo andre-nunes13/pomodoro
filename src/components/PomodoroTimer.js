@@ -51,8 +51,7 @@ const PomodoroTimer = () => {
     toggleTimer,
     resetTimer,
     formatTime,
-    achievements,
-    achievementList,
+    t,
   } = useContext(AppContext);
 
   const [isConfigOpen, setIsConfigOpen] = React.useState(false);
@@ -104,7 +103,7 @@ const PomodoroTimer = () => {
     >
       <Stack direction="row" justify="space-between" align="center" mb={4}>
         <Text fontSize="2xl" fontWeight="bold" color="xpGray.300">
-          {isWorkSession ? "Trabalho" : "Pausa"}
+          {isWorkSession ? t("Work") : t("Break")}
         </Text>
         <Menu>
           <MenuButton
@@ -124,7 +123,7 @@ const PomodoroTimer = () => {
             boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
           >
             <MenuItem onClick={() => setIsConfigOpen(true)} variant="base">
-              Configurar Temporizador
+              {t("Configure Timer")}
             </MenuItem>
           </MenuList>
         </Menu>
@@ -141,7 +140,7 @@ const PomodoroTimer = () => {
       />
       <Box mb={4}>
         <Text fontSize="sm" color="xpGray.300">
-          Ciclo {cycleCount + 1} de {cyclesBeforeLongBreak}
+          {t("Cycle")} {cycleCount + 1} {t("of")} {cyclesBeforeLongBreak}
         </Text>
         <Progress
           value={((cycleCount + 1) / cyclesBeforeLongBreak) * 100}
@@ -163,7 +162,7 @@ const PomodoroTimer = () => {
           _hover={{ bg: isRunning ? "#FFD700" : "#00A000" }}
           _disabled={{ bg: "xpGray.200", cursor: "not-allowed" }}
         >
-          {isRunning ? "Pausar" : "Iniciar"}
+          {isRunning ? t("Pause") : t("Start")}
         </Button>
         <Button
           onClick={resetTimer}
@@ -177,7 +176,7 @@ const PomodoroTimer = () => {
           _hover={{ bg: "#FF4040" }}
           _disabled={{ bg: "xpGray.200", cursor: "not-allowed" }}
         >
-          Reiniciar
+          {t("Reset")}
         </Button>
       </Stack>
 
@@ -201,7 +200,7 @@ const PomodoroTimer = () => {
             fontSize="sm"
             p={1}
           >
-            Configurações do Temporizador
+            {t("Timer Settings")}
           </ModalHeader>
           <ModalCloseButton
             variant="actionRed"
@@ -214,7 +213,7 @@ const PomodoroTimer = () => {
             <Stack spacing={4}>
               <Box>
                 <Text mb={2} fontSize="sm" color="xpGray.300">
-                  Tempo de Trabalho (min):
+                  {t("Work Time (min)")}
                 </Text>
                 <NumberInput
                   value={workTime}
@@ -236,7 +235,7 @@ const PomodoroTimer = () => {
               </Box>
               <Box>
                 <Text mb={2} fontSize="sm" color="xpGray.300">
-                  Tempo de Pausa Curta (min):
+                  {t("Short Break Time (min)")}
                 </Text>
                 <NumberInput
                   value={breakTime}
@@ -258,7 +257,7 @@ const PomodoroTimer = () => {
               </Box>
               <Box>
                 <Text mb={2} fontSize="sm" color="xpGray.300">
-                  Tempo de Pausa Longa (min):
+                  {t("Long Break Time (min)")}
                 </Text>
                 <NumberInput
                   value={longBreakTime}
@@ -280,7 +279,7 @@ const PomodoroTimer = () => {
               </Box>
               <Box>
                 <Text mb={2} fontSize="sm" color="xpGray.300">
-                  Ciclos Antes da Pausa Longa:
+                  {t("Cycles Before Long Break")}
                 </Text>
                 <NumberInput
                   value={cyclesBeforeLongBreak}
@@ -308,7 +307,7 @@ const PomodoroTimer = () => {
                 bg="xpBlue.100"
                 color="xpGray.300"
               >
-                Modo Estrito (sem pausas ou reinícios manuais)
+                {t("Strict Mode (no manual pauses or resets)")}
               </Checkbox>
               <Checkbox
                 isChecked={notificationsEnabled}
@@ -318,7 +317,7 @@ const PomodoroTimer = () => {
                 bg="xpBlue.100"
                 color="xpGray.300"
               >
-                Notificações Sonoras
+                {t("Sound Notifications")}
               </Checkbox>
             </Stack>
           </ModalBody>
@@ -332,7 +331,7 @@ const PomodoroTimer = () => {
               _hover={{ bg: "xpBlue.400" }}
               size="sm"
             >
-              OK
+              {t("OK")}
             </Button>
           </ModalFooter>
         </MotionModalContent>

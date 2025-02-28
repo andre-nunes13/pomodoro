@@ -3,7 +3,7 @@ import { AppContext } from "../context/AppContext";
 import { Box, Text, SimpleGrid, Badge, Tooltip } from "@chakra-ui/react";
 
 const Achievements = () => {
-  const { achievements, achievementList } = useContext(AppContext);
+  const { achievements, achievementList, t } = useContext(AppContext);
 
   return (
     <Box
@@ -16,7 +16,7 @@ const Achievements = () => {
       overflowY="auto"
     >
       <Text fontSize="2xl" fontWeight="bold" mb={4} color="xpGray.300">
-        Conquistas
+        {t("Achievements")}
       </Text>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
         {achievementList.map((achievement) => {
@@ -43,7 +43,7 @@ const Achievements = () => {
                 <Text fontSize="sm">{achievement.description}</Text>
                 {isUnlocked && (
                   <Badge mt={2} colorScheme="yellow">
-                    Desbloqueado em: {unlockedData.unlockedAt}
+                    {t("Unlocked at")}: {unlockedData.unlockedAt}
                   </Badge>
                 )}
               </Box>

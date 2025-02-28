@@ -25,7 +25,7 @@ import { EditIcon, DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const TaskList = () => {
-  const { tasks, setTasks } = useContext(AppContext);
+  const { tasks, setTasks, t } = useContext(AppContext);
   const [newTask, setNewTask] = useState("");
   const [editingTask, setEditingTask] = useState(null);
   const [editText, setEditText] = useState("");
@@ -62,8 +62,8 @@ const TaskList = () => {
         },
       ]);
       setNewTask("");
-      setTaskCategory("Estudo");
-      setTaskPriority("Média");
+      setTaskCategory(t("Study"));
+      setTaskPriority(t("Medium"));
       setIsAddOpen(false);
     }
   };
@@ -97,7 +97,7 @@ const TaskList = () => {
 
   const generateTasks = async () => {
     if (!generateTopic.trim() || !generateQuantity) {
-      alert("Por favor, insira um tema e selecione a quantidade de tarefas.");
+      alert(t("Please enter a theme and select the number of tasks."));
       return;
     }
 
@@ -117,9 +117,9 @@ const TaskList = () => {
         id: Date.now() + index,
         description: task,
         completed: false,
-        category: "Estudo",
+        category: t("Study"),
         dueDate: null,
-        priority: "Média",
+        priority: t("Medium"),
       }));
 
       setTasks([...tasks, ...generatedTasks]);
@@ -128,14 +128,14 @@ const TaskList = () => {
       setGenerateQuantity(5);
     } catch (error) {
       console.error("Erro ao gerar tarefas com o Gemini:", error);
-      alert("Ocorreu um erro ao gerar as tarefas. Verifique a chave de API ou o tema.");
+      alert(t("An error occurred while generating tasks. Check the API key or theme."));
       const mockTasks = Array.from({ length: generateQuantity }, (_, i) => ({
         id: Date.now() + i,
-        description: `${i + 1}. Tarefa sobre ${generateTopic}`,
+        description: `${i + 1}. ${t("Task about")} ${generateTopic}`,
         completed: false,
-        category: "Estudo",
+        category: t("Study"),
         dueDate: null,
-        priority: "Média",
+        priority: t("Medium"),
       }));
       setTasks([...tasks, ...mockTasks]);
     } finally {
@@ -168,7 +168,7 @@ const TaskList = () => {
     <Box p={6} bg="xpBlue.100" borderRadius={0} boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)">
       <Stack direction="row" justify="space-between" align="center" mb={4}>
         <Text fontSize="2xl" fontWeight="bold">
-          Lista de Tarefas
+          {t("Task List")}
         </Text>
         <Stack direction="row" spacing={2}>
           <Menu>
@@ -182,15 +182,15 @@ const TaskList = () => {
               color="black"
               boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
               _hover={{ bg: "xpBlue.400" }}
-              aria-label="Ações de Tarefas"
+              aria-label={t("Task Actions")}
               isDisabled={isLoading}
             />
             <MenuList bg="xpBlue.100" borderColor="xpGray.200" boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
               <MenuItem onClick={() => setIsAddOpen(true)} bg="xpBlue.100" isDisabled={isLoading}>
-                Adicionar Tarefa Manualmente
+                {t("Add Task Manually")}
               </MenuItem>
               <MenuItem onClick={() => setIsGenerateOpen(true)} bg="xpBlue.100" isDisabled={isLoading}>
-                Gerar Tarefas Automáticas
+                {t("Generate Automatic Tasks")}
               </MenuItem>
             </MenuList>
           </Menu>
@@ -203,7 +203,7 @@ const TaskList = () => {
             color="white"
             boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
             _hover={{ bg: "#FF4040" }}
-            aria-label="Gerenciar Tarefas"
+            aria-label={t("Manage Tasks")}
             onClick={() => setIsManageOpen(true)}
             isDisabled={isLoading || tasks.length === 0}
           />
@@ -261,12 +261,12 @@ const TaskList = () => {
                     _hover={{ bg: "xpBlue.400" }}
                     isDisabled={isLoading}
                   >
-                    Salvar
+                    {t("Save")}
                   </Button>
                 </Stack>
               ) : (
                 <Text flex={1} className={task.completed ? "line-through text-gray-500" : ""}>
-                  {task.description} (Cat: {task.category}, Pri: {task.priority})
+                  {task.description} ({t("Cat")}: {t(task.category)}, {t("Pri")}: {t(task.priority)})
                 </Text>
               )}
               <Menu>
@@ -282,7 +282,7 @@ const TaskList = () => {
                 />
                 <MenuList bg="xpBlue.100" borderColor="xpGray.200" boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
                   <MenuItem onClick={() => editTask(task)} bg="xpBlue.100" icon={<EditIcon />} isDisabled={isLoading}>
-                    Editar
+                    {t("Edit")}
                   </MenuItem>
                   <MenuItem
                     onClick={() => deleteTask(task.id)}
@@ -291,7 +291,7 @@ const TaskList = () => {
                     color="xpRed.500"
                     isDisabled={isLoading}
                   >
-                    Excluir
+                    {t("Delete")}
                   </MenuItem>
                 </MenuList>
               </Menu>
@@ -304,17 +304,17 @@ const TaskList = () => {
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
         <ModalContent bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)">
           <ModalHeader bg="xpBlue.200" color="white" borderBottom="1px solid" borderColor="xpGray.200">
-            Adicionar Tarefa Manualmente
+            {t("Add Task Manually")}
           </ModalHeader>
           <ModalCloseButton color="white" isDisabled={isLoading} />
           <ModalBody>
             <Stack spacing={4}>
               <Box>
-                <Text mb={2}>Nova Tarefa:</Text>
+                <Text mb={2}>{t("New Task")}</Text>
                 <Input
                   value={newTask}
                   onChange={(e) => setNewTask(e.target.value)}
-                  placeholder="Digite a tarefa"
+                  placeholder={t("Enter the task")}
                   bg="white"
                   color="xpGray.300"
                   border="1px solid"
@@ -324,7 +324,7 @@ const TaskList = () => {
                 />
               </Box>
               <Box>
-                <Text mb={2}>Categoria:</Text>
+                <Text mb={2}>{t("Category")}</Text>
                 <Select
                   value={taskCategory}
                   onChange={(e) => setTaskCategory(e.target.value)}
@@ -335,13 +335,13 @@ const TaskList = () => {
                   boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
                   isDisabled={isLoading}
                 >
-                  <option value="Estudo">Estudo</option>
-                  <option value="Trabalho">Trabalho</option>
-                  <option value="Lazer">Lazer</option>
+                  <option value="Estudo">{t("Study")}</option>
+                  <option value="Trabalho">{t("Work")}</option>
+                  <option value="Lazer">{t("Leisure")}</option>
                 </Select>
               </Box>
               <Box>
-                <Text mb={2}>Prioridade:</Text>
+                <Text mb={2}>{t("Priority")}</Text>
                 <Select
                   value={taskPriority}
                   onChange={(e) => setTaskPriority(e.target.value)}
@@ -352,9 +352,9 @@ const TaskList = () => {
                   boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
                   isDisabled={isLoading}
                 >
-                  <option value="Alta">Alta</option>
-                  <option value="Média">Média</option>
-                  <option value="Baixa">Baixa</option>
+                  <option value="Alta">{t("High")}</option>
+                  <option value="Média">{t("Medium")}</option>
+                  <option value="Baixa">{t("Low")}</option>
                 </Select>
               </Box>
             </Stack>
@@ -370,7 +370,7 @@ const TaskList = () => {
               _hover={{ bg: "#00A000" }}
               isDisabled={isLoading}
             >
-              Adicionar
+              {t("Add")}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -380,17 +380,17 @@ const TaskList = () => {
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
         <ModalContent bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)">
           <ModalHeader bg="xpBlue.200" color="white" borderBottom="1px solid" borderColor="xpGray.200">
-            Gerar Tarefas Automáticas
+            {t("Generate Automatic Tasks")}
           </ModalHeader>
           <ModalCloseButton color="white" isDisabled={isLoading} />
           <ModalBody>
             <Stack spacing={4}>
               <Box>
-                <Text mb={2}>Tema:</Text>
+                <Text mb={2}>{t("Theme")}</Text>
                 <Input
                   value={generateTopic}
                   onChange={(e) => setGenerateTopic(e.target.value)}
-                  placeholder="Digite o tema (ex.: Matemática)"
+                  placeholder={t("Enter the theme (ex.: Mathematics)")}
                   bg="white"
                   color="xpGray.300"
                   border="1px solid"
@@ -400,7 +400,7 @@ const TaskList = () => {
                 />
               </Box>
               <Box>
-                <Text mb={2}>Quantidade de Tarefas:</Text>
+                <Text mb={2}>{t("Quantity of Tasks")}</Text>
                 <Select
                   value={generateQuantity}
                   onChange={(e) => setGenerateQuantity(parseInt(e.target.value))}
@@ -435,9 +435,9 @@ const TaskList = () => {
               boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)"
               _hover={{ bg: "xpBlue.400" }}
               isLoading={isLoading}
-              loadingText="Gerando..."
+              loadingText={t("Generating")}
             >
-              Gerar
+              {t("Generate")}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -447,12 +447,12 @@ const TaskList = () => {
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
         <ModalContent bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)">
           <ModalHeader bg="xpBlue.200" color="white" borderBottom="1px solid" borderColor="xpGray.200">
-            Gerenciar Tarefas
+            {t("Manage Tasks")}
           </ModalHeader>
           <ModalCloseButton color="white" isDisabled={isLoading} />
           <ModalBody>
             <Stack spacing={4}>
-              <Text>Selecione as tarefas para apagar:</Text>
+              <Text>{t("Select tasks to delete")}</Text>
               <Stack spacing={2}>
                 {tasks.map((task) => (
                   <Box key={task.id} display="flex" alignItems="center" p={2} bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5)">
@@ -464,7 +464,7 @@ const TaskList = () => {
                       bg="xpBlue.100"
                       isDisabled={isLoading}
                     />
-                    <Text>{task.description} (Cat: {task.category}, Pri: {task.priority})</Text>
+                    <Text>{task.description} ({t("Cat")}: {t(task.category)}, {t("Pri")}: {t(task.priority)})</Text>
                   </Box>
                 ))}
               </Stack>
@@ -478,7 +478,7 @@ const TaskList = () => {
                 _hover={{ bg: "xpBlue.400" }}
                 isDisabled={isLoading || tasks.length === 0}
               >
-                Selecionar Todas
+                {t("Select All")}
               </Button>
             </Stack>
           </ModalBody>
@@ -493,7 +493,7 @@ const TaskList = () => {
               _hover={{ bg: "#FF4040" }}
               isDisabled={isLoading || selectedTasks.size === 0}
             >
-              Apagar Selecionadas
+              {t("Delete Selected")}
             </Button>
           </ModalFooter>
         </ModalContent>
