@@ -25,7 +25,7 @@ import { EditIcon, DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const TaskList = () => {
-  const { tasks, setTasks, t } = useContext(AppContext);
+  const { tasks, setTasks, t, language } = useContext(AppContext); // Adicionei 'language'
   const [newTask, setNewTask] = useState("");
   const [editingTask, setEditingTask] = useState(null);
   const [editText, setEditText] = useState("");
@@ -103,7 +103,10 @@ const TaskList = () => {
 
     setIsLoading(true);
     try {
-      const prompt = `Cria exatamente ${generateQuantity} tarefas detalhadas para estudar sobre o seguinte tema: "${generateTopic}". As tarefas devem ser numeradas de 1 a ${generateQuantity}, focadas e específicas. Não deves incluir texto extra, apenas as ${generateQuantity} tarefas numeradas. Exemplo: 1. Resolver 10 exercícios de tal matéria 2. Estudar 30 minutos sobre funções exponenciais APENAS ESCREVE AS TAREFAS E NADA ALÉM DISSO`;
+      // Prompt dinâmico baseado no idioma
+      const prompt = language === "en"
+        ? `Generate exactly ${generateQuantity} detailed tasks for studying the following topic: "${generateTopic}". Number the tasks from 1 to ${generateQuantity}, keeping them focused and specific. Example: 1. Solve 10 exercises on this subject 2. Study 30 minutes about exponential functions. WRITE ONLY THE ${generateQuantity} TASKS AND NOTHING ELSE.`
+        : `Cria exatamente ${generateQuantity} tarefas detalhadas para estudar sobre o seguinte tema: "${generateTopic}". Numera as tarefas de 1 a ${generateQuantity}, mantendo-as focadas e específicas. Exemplo: 1. Resolver 10 exercícios de tal matéria 2. Estudar 30 minutos sobre funções exponenciais. ESCREVE APENAS AS ${generateQuantity} TAREFAS E NADA ALÉM DISSO.`;
 
       const result = await model.generateContent(prompt);
       const responseText = result.response.text();
@@ -120,6 +123,7 @@ const TaskList = () => {
         category: t("Study"),
         dueDate: null,
         priority: t("Medium"),
+        generatedByAI: true, // Marca como gerada por IA
       }));
 
       setTasks([...tasks, ...generatedTasks]);
@@ -131,11 +135,12 @@ const TaskList = () => {
       alert(t("An error occurred while generating tasks. Check the API key or theme."));
       const mockTasks = Array.from({ length: generateQuantity }, (_, i) => ({
         id: Date.now() + i,
-        description: `${i + 1}. ${t("Task about")} ${generateTopic}`,
+        description: `${i + 1}. ${language === "en" ? "Study" : "Estudar"} ${generateTopic}`,
         completed: false,
         category: t("Study"),
         dueDate: null,
         priority: t("Medium"),
+        generatedByAI: true, // Marca o fallback como gerado por IA
       }));
       setTasks([...tasks, ...mockTasks]);
     } finally {
