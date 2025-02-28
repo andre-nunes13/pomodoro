@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
 import TaskList from "./components/TaskList";
+import Achievements from "./components/Achievements";
+import StickyNote from "./components/StickyNote";
 import Taskbar from "./components/Taskbar";
 import { AppContext } from "./context/AppContext";
 import { Box, Button, Stack, Text, Flex } from "@chakra-ui/react";
@@ -9,9 +11,11 @@ import { Box, Button, Stack, Text, Flex } from "@chakra-ui/react";
 const App = () => {
   const { keyboardShortcuts, activeTab, setActiveTab } = useContext(AppContext);
   const [position, setPosition] = useState({ x: 50, y: 50 });
+  const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 }); // Posição fixa inicial
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const dragRef = useRef(null);
+  const stickyDragRef = useRef(null);
 
   const containerWidth = { base: "95%", md: "640px" };
   const openApps = [{ id: "focusxp", title: "FOCUSXP", icon: "/focusxp-icon.png" }];
@@ -30,6 +34,9 @@ const App = () => {
           break;
         case keyboardShortcuts.tasks:
           setActiveTab("tasks");
+          break;
+        case keyboardShortcuts.achievements:
+          setActiveTab("achievements");
           break;
         default:
           break;
@@ -70,27 +77,61 @@ const App = () => {
     }
   };
 
+  const handleStickyMouseDown = (e) => {
+    if (
+      stickyDragRef.current &&
+      (e.target === stickyDragRef.current || stickyDragRef.current.contains(e.target))
+    ) {
+      const startX = e.clientX - stickyPosition.x;
+      const startY = e.clientY - stickyPosition.y;
+
+      const handleMouseMove = (e) => {
+        const newX = e.clientX - startX;
+        const newY = e.clientY - startY;
+        setStickyPosition({ x: newX, y: newY });
+      };
+
+      const handleMouseUp = () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+
+      e.preventDefault();
+    }
+  };
+
   const handleStartClick = () => {
     console.log("Abrir menu Iniciar");
   };
 
   const handleAppClick = () => {
-    setIsMinimized(false); // Restaura a janela ao clicar na Taskbar
+    setIsMinimized(false);
   };
 
   const handleMinimize = () => setIsMinimized(true);
   const handleMaximizeRestore = () => {
     setIsMaximized(!isMaximized);
     if (!isMaximized) {
-      setPosition({ x: 0, y: 0 }); // Move para o topo ao maximizar
+      setPosition({ x: 0, y: 0 });
     } else {
-      setPosition({ x: 50, y: 50 }); // Restaura para a posição original ao desmaximizar
+      setPosition({ x: 50, y: 50 });
     }
   };
-  const handleClose = () => setIsMinimized(true); // Simula fechamento
+  const handleClose = () => setIsMinimized(true);
 
   return (
-    <Box minH="100vh" bg="#D4D0C8" display="flex" flexDirection="column">
+    <Box
+      minH="100vh"
+      backgroundImage="url('/bliss.jpg')"
+      backgroundSize="cover"
+      backgroundPosition="center center"
+      backgroundRepeat="no-repeat"
+      display="flex"
+      flexDirection="column"
+    >
       {!isMinimized && (
         <Box
           w={isMaximized ? "100%" : containerWidth}
@@ -189,7 +230,7 @@ const App = () => {
               borderColor="#808080"
               boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
             >
-              {["timer", "history", "tasks"].map((tab) => (
+              {["timer", "history", "tasks", "achievements"].map((tab) => (
                 <Button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -214,7 +255,9 @@ const App = () => {
                     ? "Temporizador"
                     : tab === "history"
                     ? "Histórico"
-                    : "Tarefas"}
+                    : tab === "tasks"
+                    ? "Tarefas"
+                    : "Conquistas"}
                 </Button>
               ))}
             </Stack>
@@ -223,10 +266,13 @@ const App = () => {
               {activeTab === "timer" && <PomodoroTimer />}
               {activeTab === "history" && <SessionHistory />}
               {activeTab === "tasks" && <TaskList />}
+              {activeTab === "achievements" && <Achievements />}
             </Box>
           </Box>
         </Box>
       )}
+
+      <StickyNote ref={stickyDragRef} position={stickyPosition} onMouseDown={handleStickyMouseDown} />
 
       <Taskbar
         openApps={openApps}

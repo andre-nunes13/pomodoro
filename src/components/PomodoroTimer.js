@@ -26,6 +26,9 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { SettingsIcon } from "@chakra-ui/icons";
+import { motion } from "framer-motion";
+
+const MotionModalContent = motion(ModalContent);
 
 const PomodoroTimer = () => {
   const {
@@ -81,6 +84,12 @@ const PomodoroTimer = () => {
     : breakTime * 60;
   const progress = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
 
+  const modalVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+    exit: { opacity: 0, y: 50, transition: { duration: 0.2 } },
+  };
+
   return (
     <Box
       p={6}
@@ -126,6 +135,17 @@ const PomodoroTimer = () => {
         bg="xpGray.200"
         boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
       />
+      <Box mb={4}>
+        <Text fontSize="sm" color="xpGray.300">
+          Ciclo {cycleCount + 1} de {cyclesBeforeLongBreak}
+        </Text>
+        <Progress
+          value={((cycleCount + 1) / cyclesBeforeLongBreak) * 100}
+          size="xs"
+          colorScheme="green"
+          bg="xpGray.200"
+        />
+      </Box>
       <Stack direction="row" spacing={4}>
         <Button
           onClick={toggleTimer}
@@ -159,11 +179,15 @@ const PomodoroTimer = () => {
 
       <Modal isOpen={isConfigOpen} onClose={handleConfigClose}>
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
-        <ModalContent
+        <MotionModalContent
           bg="xpBlue.100"
           border="2px solid"
           borderColor="xpGray.200"
           boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={modalVariants}
         >
           <ModalHeader
             bgGradient="linear(to-r, xpBlue.200, xpBlue.300)"
@@ -185,7 +209,9 @@ const PomodoroTimer = () => {
           <ModalBody p={4}>
             <Stack spacing={4}>
               <Box>
-                <Text mb={2} fontSize="sm" color="xpGray.300">Tempo de Trabalho (min):</Text>
+                <Text mb={2} fontSize="sm" color="xpGray.300">
+                  Tempo de Trabalho (min):
+                </Text>
                 <NumberInput
                   value={workTime}
                   onChange={(_, value) => setWorkTime(value)}
@@ -205,7 +231,9 @@ const PomodoroTimer = () => {
                 </NumberInput>
               </Box>
               <Box>
-                <Text mb={2} fontSize="sm" color="xpGray.300">Tempo de Pausa Curta (min):</Text>
+                <Text mb={2} fontSize="sm" color="xpGray.300">
+                  Tempo de Pausa Curta (min):
+                </Text>
                 <NumberInput
                   value={breakTime}
                   onChange={(_, value) => setBreakTime(value)}
@@ -225,7 +253,9 @@ const PomodoroTimer = () => {
                 </NumberInput>
               </Box>
               <Box>
-                <Text mb={2} fontSize="sm" color="xpGray.300">Tempo de Pausa Longa (min):</Text>
+                <Text mb={2} fontSize="sm" color="xpGray.300">
+                  Tempo de Pausa Longa (min):
+                </Text>
                 <NumberInput
                   value={longBreakTime}
                   onChange={(_, value) => setLongBreakTime(value)}
@@ -245,7 +275,9 @@ const PomodoroTimer = () => {
                 </NumberInput>
               </Box>
               <Box>
-                <Text mb={2} fontSize="sm" color="xpGray.300">Ciclos Antes da Pausa Longa:</Text>
+                <Text mb={2} fontSize="sm" color="xpGray.300">
+                  Ciclos Antes da Pausa Longa:
+                </Text>
                 <NumberInput
                   value={cyclesBeforeLongBreak}
                   onChange={(_, value) => setCyclesBeforeLongBreak(value)}
@@ -299,7 +331,7 @@ const PomodoroTimer = () => {
               OK
             </Button>
           </ModalFooter>
-        </ModalContent>
+        </MotionModalContent>
       </Modal>
     </Box>
   );
