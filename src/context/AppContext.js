@@ -25,10 +25,10 @@ export const AppProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState("timer");
   const [achievements, setAchievements] = useState(() => {
     const stored = getStoredValue("achievements", []);
-    const uniqueAchievements = Array.from(new Map(stored.map((a) => [a.id, a])).values());
-    return uniqueAchievements;
+    return Array.from(new Map(stored.map((a) => [a.id, a])).values());
   });
   const [language, setLanguage] = useState(() => getStoredValue("language", "en"));
+  const [visitedTabs, setVisitedTabs] = useState(() => getStoredValue("visitedTabs", []));
 
   const [timeLeft, setTimeLeft] = useState(workTime * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -37,6 +37,16 @@ export const AppProvider = ({ children }) => {
   const [endTime, setEndTime] = useState(null);
 
   const t = useCallback((key) => translations[language][key] || key, [language]);
+
+  useEffect(() => {
+    if (!visitedTabs.includes(activeTab)) {
+      setVisitedTabs((prev) => {
+        const newVisited = [...prev, activeTab];
+        localStorage.setItem("visitedTabs", JSON.stringify(newVisited));
+        return newVisited;
+      });
+    }
+  }, [activeTab, visitedTabs]);
 
   const achievementList = useMemo(
     () => [
@@ -54,14 +64,24 @@ export const AppProvider = ({ children }) => {
       { id: 12, name: t("Task Completed"), description: t("Mark a task as completed"), condition: () => tasks.some(task => task.completed) },
       { id: 13, name: t("Multitasking"), description: t("Complete 5 tasks"), condition: () => tasks.filter(task => task.completed).length >= 5 },
       { id: 14, name: t("Total Focus"), description: t("Complete 10 cycles without pausing"), condition: () => cycleCount >= 10 && !isRunning },
-      { id: 15, name: t("Explorer"), description: t("Visit all tabs of the application"), condition: () => ["timer", "history", "tasks", "achievements"].every(tab => activeTab === tab || true) },
+      {
+        id: 15,
+        name: t("Explorer"),
+        description: t("Visit all tabs of the application"),
+        condition: () => ["timer", "history", "tasks", "achievements", "settings"].every(tab => visitedTabs.includes(tab))
+      },
       { id: 16, name: t("Customizer"), description: t("Change keyboard shortcuts"), condition: () => Object.values(keyboardShortcuts).some(key => key !== "t" && key !== "h" && key !== "k") },
-      { id: 17, name: t("Idea Generator"), description: t("Generate automatic tasks with AI"), condition: () => tasks.some(task => task.description.includes(t("Task about"))) },
+      {
+        id: 17,
+        name: t("Idea Generator"),
+        description: t("Generate automatic tasks with AI"),
+        condition: () => tasks.some(task => task.generatedByAI === true) // Corrigido para usar generatedByAI
+      },
       { id: 18, name: t("Productive Day"), description: t("Complete 8 hours of work"), condition: () => sessions.reduce((acc, session) => acc + (session.type === "Trabalho" ? session.duration : 0), 0) >= 480 },
       { id: 19, name: t("No Distractions"), description: t("Complete 5 cycles in strict mode"), condition: () => strictMode && cycleCount >= 5 },
       { id: 20, name: t("Conqueror"), description: t("Unlock all other achievements"), condition: () => achievements.length === 19 },
     ],
-    [cycleCount, tasks, strictMode, notificationsEnabled, sessions, cyclesBeforeLongBreak, isRunning, keyboardShortcuts, activeTab, achievements.length, t]
+    [cycleCount, tasks, strictMode, notificationsEnabled, sessions, cyclesBeforeLongBreak, isRunning, keyboardShortcuts, visitedTabs, achievements.length, t]
   );
 
   const formatTime = (seconds) => {
@@ -87,6 +107,7 @@ export const AppProvider = ({ children }) => {
           })),
         ];
         const uniqueAchievements = Array.from(new Map(newAchievements.map((a) => [a.id, a])).values());
+        localStorage.setItem("achievements", JSON.stringify(uniqueAchievements));
         return uniqueAchievements;
       });
 
@@ -227,6 +248,7 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
     localStorage.setItem("achievements", JSON.stringify(achievements));
     localStorage.setItem("language", JSON.stringify(language));
+    localStorage.setItem("visitedTabs", JSON.stringify(visitedTabs));
   }, [
     workTime,
     breakTime,
@@ -239,6 +261,7 @@ export const AppProvider = ({ children }) => {
     tasks,
     achievements,
     language,
+    visitedTabs,
   ]);
 
   useEffect(() => {
@@ -266,6 +289,7 @@ export const AppProvider = ({ children }) => {
     setStrictMode(false);
     setNotificationsEnabled(true);
     setKeyboardShortcuts({ timer: "t", history: "h", tasks: "k" });
+    setVisitedTabs([]);
   };
 
   return (
@@ -307,6 +331,8 @@ export const AppProvider = ({ children }) => {
         language,
         setLanguage,
         t,
+        visitedTabs,
+        setVisitedTabs,
       }}
     >
       {children}
