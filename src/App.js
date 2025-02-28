@@ -14,14 +14,14 @@ const App = () => {
   const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 });
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
-  const [isStickyMinimized, setIsStickyMinimized] = useState(false); // Estado para StickyNote
+  const [isStickyMinimized, setIsStickyMinimized] = useState(false);
   const dragRef = useRef(null);
   const stickyDragRef = useRef(null);
 
   const containerWidth = { base: "95%", md: "640px" };
   const openApps = [
     { id: "focusxp", title: "FOCUSXP", icon: "/focusxp-icon.png" },
-    { id: "stickynote", title: "Sticky Note", icon: "/sticky-icon.png" }, // Novo app para StickyNote
+    { id: "stickynote", title: "Sticky Note", icon: "/sticky-icon.png" },
   ];
 
   useEffect(() => {
@@ -113,9 +113,9 @@ const App = () => {
 
   const handleAppClick = (appId) => {
     if (appId === "focusxp") {
-      setIsMinimized((prev) => !prev); // Alterna entre minimizar e restaurar o FOCUSXP
+      setIsMinimized((prev) => !prev);
     } else if (appId === "stickynote") {
-      setIsStickyMinimized((prev) => !prev); // Alterna entre minimizar e restaurar o StickyNote
+      setIsStickyMinimized((prev) => !prev);
     }
   };
 

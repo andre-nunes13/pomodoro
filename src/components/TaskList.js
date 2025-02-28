@@ -209,11 +209,10 @@ const TaskList = () => {
           />
         </Stack>
       </Stack>
-      {/* Adicionando um contêiner com altura máxima e barra de rolagem */}
       <Box
-        maxH="400px" // Define uma altura máxima para a lista de tarefas
-        overflowY="auto" // Ativa a barra de rolagem vertical quando necessário
-        border="1px solid" // Adiciona uma borda para delimitar a área rolável
+        maxH="400px"
+        overflowY="auto"
+        border="1px solid"
         borderColor="xpGray.200"
         bg="xpBlue.100"
         p={2}
@@ -301,7 +300,6 @@ const TaskList = () => {
         </Stack>
       </Box>
 
-      {/* Modal para Adicionar Tarefa Manualmente */}
       <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)}>
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
         <ModalContent bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)">
@@ -378,7 +376,6 @@ const TaskList = () => {
         </ModalContent>
       </Modal>
 
-      {/* Modal para Gerar Tarefas Automáticas */}
       <Modal isOpen={isGenerateOpen} onClose={() => setIsGenerateOpen(false)}>
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
         <ModalContent bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)">
@@ -446,7 +443,6 @@ const TaskList = () => {
         </ModalContent>
       </Modal>
 
-      {/* Modal para Gerenciar e Apagar Tarefas */}
       <Modal isOpen={isManageOpen} onClose={() => setIsManageOpen(false)}>
         <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
         <ModalContent bg="xpBlue.100" border="1px solid" borderColor="xpGray.200" boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)">
