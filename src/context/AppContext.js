@@ -8,7 +8,6 @@ export const AppProvider = ({ children }) => {
   const toast = useToast();
   const getStoredValue = (key, defaultValue) => {
     const saved = localStorage.getItem(key);
-    console.log(`[getStoredValue] Key: ${key}, Value: ${saved}`);
     return saved ? JSON.parse(saved) : defaultValue;
   };
 
@@ -27,7 +26,6 @@ export const AppProvider = ({ children }) => {
   const [achievements, setAchievements] = useState(() => {
     const stored = getStoredValue("achievements", []);
     const uniqueAchievements = Array.from(new Map(stored.map((a) => [a.id, a])).values());
-    console.log('[Initial Achievements]', uniqueAchievements);
     return uniqueAchievements;
   });
   const [language, setLanguage] = useState(() => getStoredValue("language", "en"));
@@ -38,7 +36,6 @@ export const AppProvider = ({ children }) => {
   const [cycleCount, setCycleCount] = useState(0);
   const [endTime, setEndTime] = useState(null);
 
-  // Memoizar a função t com useCallback
   const t = useCallback((key) => translations[language][key] || key, [language]);
 
   const achievementList = useMemo(
@@ -74,12 +71,9 @@ export const AppProvider = ({ children }) => {
   };
 
   const updateAchievements = useCallback(() => {
-    console.log('[updateAchievements] Executando...');
-    console.log('[updateAchievements] Achievements atuais:', achievements);
     const unlockedAchievements = achievementList.filter(
       (achievement) => achievement.condition() && !achievements.some((a) => a.id === achievement.id)
     );
-    console.log('[updateAchievements] Novas conquistas detectadas:', unlockedAchievements);
 
     if (unlockedAchievements.length > 0) {
       setAchievements((prev) => {
@@ -93,12 +87,10 @@ export const AppProvider = ({ children }) => {
           })),
         ];
         const uniqueAchievements = Array.from(new Map(newAchievements.map((a) => [a.id, a])).values());
-        console.log('[updateAchievements] Novo estado de conquistas (único):', uniqueAchievements);
         return uniqueAchievements;
       });
 
       unlockedAchievements.forEach((achievement) => {
-        console.log(`[updateAchievements] Toast disparado para: ${achievement.name}`);
         toast({
           title: t("Achievement Unlocked"),
           description: `${achievement.name}: ${achievement.description}`,
@@ -116,8 +108,6 @@ export const AppProvider = ({ children }) => {
           },
         });
       });
-    } else {
-      console.log('[updateAchievements] Nenhuma nova conquista para adicionar.');
     }
   }, [achievementList, achievements, toast, t]);
 
@@ -126,11 +116,9 @@ export const AppProvider = ({ children }) => {
 
     const now = Date.now();
     const newTimeLeft = Math.max(0, Math.floor((endTime - now) / 1000));
-    console.log(`[updateTimer] timeLeft: ${newTimeLeft}`);
     setTimeLeft(newTimeLeft);
 
     if (newTimeLeft <= 0) {
-      console.log('[updateTimer] Ciclo concluído');
       if (notificationsEnabled) {
         new Audio("/sound.mp3").play().catch((error) => console.error("Erro ao tocar som:", error));
       }
@@ -193,14 +181,11 @@ export const AppProvider = ({ children }) => {
           if (timeLeft === sessionDuration && endTime === null) {
             setTimeLeft(sessionDuration);
             setEndTime(Date.now() + sessionDuration * 1000);
-            console.log('[toggleTimer] Timer iniciado');
           } else {
             setEndTime(Date.now() + timeLeft * 1000);
-            console.log('[toggleTimer] Timer retomado');
           }
         } else {
           setEndTime(null);
-          console.log('[toggleTimer] Timer pausado');
         }
         return !prev;
       });
@@ -214,7 +199,6 @@ export const AppProvider = ({ children }) => {
       setTimeLeft(workTime * 60);
       setCycleCount(0);
       setEndTime(null);
-      console.log('[resetTimer] Timer reiniciado');
     }
   };
 
@@ -222,19 +206,16 @@ export const AppProvider = ({ children }) => {
     let timerInterval;
     if (isRunning) {
       timerInterval = setInterval(() => {
-        console.log('[Timer Interval] Executando updateTimer');
         updateTimer();
       }, 1000);
       updateTimer();
     }
     return () => {
-      console.log('[Timer Interval] Limpando intervalo');
       clearInterval(timerInterval);
     };
   }, [isRunning, updateTimer]);
 
   useEffect(() => {
-    console.log('[useEffect] Atualizando localStorage');
     localStorage.setItem("workTime", JSON.stringify(workTime));
     localStorage.setItem("breakTime", JSON.stringify(breakTime));
     localStorage.setItem("longBreakTime", JSON.stringify(longBreakTime));
@@ -261,7 +242,6 @@ export const AppProvider = ({ children }) => {
   ]);
 
   useEffect(() => {
-    console.log('[useEffect] Verificando conquistas iniciais');
     updateAchievements();
   }, [updateAchievements]);
 
@@ -286,7 +266,6 @@ export const AppProvider = ({ children }) => {
     setStrictMode(false);
     setNotificationsEnabled(true);
     setKeyboardShortcuts({ timer: "t", history: "h", tasks: "k" });
-    console.log('[resetSettings] Configurações resetadas');
   };
 
   return (
