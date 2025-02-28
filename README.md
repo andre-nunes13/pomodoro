@@ -1,35 +1,67 @@
-# Pomodoro XP Retro
+# 🎯 Pomodoro XP
 
-> Um temporizador Pomodoro com uma interface nostálgica inspirada no Windows XP.
+Pomodoro XP is a time management application inspired by Windows XP. It helps you stay productive using the Pomodoro technique, with features like a timer, task manager, sticky notes, and session history tracking.
 
-## 🖥️ Sobre o Projeto
+🔗 Live Demo: [focusxp.vercel.app](focusxp.vercel.app)
 
-O **Pomodoro XP Retro** é uma aplicação que utiliza a técnica Pomodoro para aumentar a produtividade, oferecendo uma interface única inspirada no design clássico do Windows XP. É ideal para quem quer estudar ou trabalhar de forma mais eficiente, com um toque de nostalgia.
+## 🚀 Features
 
-## ✨ Funcionalidades
+* ✅ Pomodoro Timer – Stay focused with time blocks.
+* ✅ Task Manager – Organize your work efficiently.
+* ✅ Session History – Track your productivity over time.
+* ✅ Sticky Notes – Quickly jot down important reminders.
+* ✅ Retro XP Interface – A nostalgic Windows XP-inspired design.
+* ✅ Draggable Windows – Move your apps freely on the screen.
+* ✅ Keyboard Shortcuts – Quickly switch between features.
+* ✅ XP-Style Taskbar – Manage open applications easily.
+* ✅ Minimize & Maximize Windows – Customize your workspace.
+* ✅ Custom Cursors – Complete the XP aesthetic.
 
-- ✅ **Temporizador Personalizável** - Ajuste a duração das sessões de trabalho e pausas.  
-- ✅ **Sons e Notificações** - Alertas sonoros ao início e fim de cada ciclo.  
-- ✅ **Histórico de Sessões** - Acompanhe o número de ciclos concluídos diariamente.  
-- ✅ **Modo Retrô** - Interface inspirada no Windows XP com botões clássicos e efeitos visuais nostálgicos.  
-- ✅ **Dark Mode** - Alternância entre temas claro e escuro.  
-- ✅ **Atalhos de Teclado** - Controles rápidos para iniciar, pausar ou resetar o temporizador.  
+## 📖 How to Use
 
-## 🚀 Instalação
+1.  Open the app: [focusxp.vercel.app](focusxp.vercel.app)
+2.  Start the pomodoro
+3.  Use the taskmananger feature with AI integration
+4.  Enjoy
 
-Para executar o projeto localmente, siga os passos abaixo:
+## 🎹 Keyboard Shortcuts
+
+| Key | Action               |
+| --- | -------------------- |
+| T   | Open Timer           |
+| H   | Open Session History |
+| A   | Open Achievements    |
+| N   | Open Sticky Notes    |
+|     | (Shortcuts can be customized in settings.) |
+
+## 🛠️ Development & Setup
+
+To run the project locally, follow these steps:
 
 ```bash
-# Clone o repositório
-git clone https://github.com/andre-nunes13/pomodoro.git
-
-# Acesse o diretório
-cd pomodoro
-
-# Crie um .env com uma chave de api do gemini do ai studio
-
-# Instale as dependências
+git clone [https://github.com/your-username/focusxp.git](https://github.com/your-username/focusxp.git)
+cd focusxp
 npm install
+npm run dev
+```
+## 🔧 Environment Variables for AI generation
 
-# Inicie a aplicação
-npm start
+Create a `.env` file in the root directory and add your Gemini API KEY [GOOGLE AI STUDIO](https://aistudio.google.com):
+```bash
+REACT_APP_GOOGLE_API_KEY=your_api_key_here
+```
+
+
+## 🏗️ Built With
+
+* React – Frontend framework
+* Chakra UI – Modern styling
+* Vercel – Fast and reliable hosting
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions or want to improve the project, feel free to open an issue or a pull request.
+
+## 📜 License
+
+This project is open-source under the MIT License.
