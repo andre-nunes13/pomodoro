@@ -11,14 +11,18 @@ import { Box, Button, Stack, Text, Flex } from "@chakra-ui/react";
 const App = () => {
   const { keyboardShortcuts, activeTab, setActiveTab } = useContext(AppContext);
   const [position, setPosition] = useState({ x: 50, y: 50 });
-  const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 }); // Posição fixa inicial
+  const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 });
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [isStickyMinimized, setIsStickyMinimized] = useState(false);
   const dragRef = useRef(null);
   const stickyDragRef = useRef(null);
 
   const containerWidth = { base: "95%", md: "640px" };
-  const openApps = [{ id: "focusxp", title: "FOCUSXP", icon: "/focusxp-icon.png" }];
+  const openApps = [
+    { id: "focusxp", title: "FOCUSXP", icon: "/focusxp-icon.png" },
+    { id: "stickynote", title: "Sticky Note", icon: "/sticky-icon.png" },
+  ];
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -107,8 +111,12 @@ const App = () => {
     console.log("Abrir menu Iniciar");
   };
 
-  const handleAppClick = () => {
-    setIsMinimized(false);
+  const handleAppClick = (appId) => {
+    if (appId === "focusxp") {
+      setIsMinimized((prev) => !prev);
+    } else if (appId === "stickynote") {
+      setIsStickyMinimized((prev) => !prev);
+    }
   };
 
   const handleMinimize = () => setIsMinimized(true);
@@ -272,7 +280,13 @@ const App = () => {
         </Box>
       )}
 
-      <StickyNote ref={stickyDragRef} position={stickyPosition} onMouseDown={handleStickyMouseDown} />
+      {!isStickyMinimized && (
+        <StickyNote
+          ref={stickyDragRef}
+          position={stickyPosition}
+          onMouseDown={handleStickyMouseDown}
+        />
+      )}
 
       <Taskbar
         openApps={openApps}

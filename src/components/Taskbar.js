@@ -94,49 +94,23 @@ const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
           >
             Windows XP
           </Box>
-          <MenuItem
-            bg="#ECE9D8"
-            _hover={{ bg: "#D4D0C8" }}
-            px={2}
-            py={1}
-          >
+          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
             <Image src="/documents-icon.png" alt="Documents" w="16px" h="16px" mr={2} />
             Meus Documentos
           </MenuItem>
-          <MenuItem
-            bg="#ECE9D8"
-            _hover={{ bg: "#D4D0C8" }}
-            px={2}
-            py={1}
-          >
+          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
             <Image src="/computer-icon.png" alt="Computer" w="16px" h="16px" mr={2} />
             Meu Computador
           </MenuItem>
-          <MenuItem
-            bg="#ECE9D8"
-            _hover={{ bg: "#D4D0C8" }}
-            px={2}
-            py={1}
-          >
+          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
             <Image src="/control-panel-icon.png" alt="Control Panel" w="16px" h="16px" mr={2} />
             Painel de Controle
           </MenuItem>
-          <MenuItem
-            bg="#ECE9D8"
-            _hover={{ bg: "#D4D0C8" }}
-            px={2}
-            py={1}
-          >
+          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
             <Image src="/run-icon.png" alt="Run" w="16px" h="16px" mr={2} />
             Executar...
           </MenuItem>
-          <MenuItem
-            bg="#ECE9D8"
-            _hover={{ bg: "#D4D0C8" }}
-            px={2}
-            py={1}
-            color="#C00000"
-          >
+          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1} color="#C00000">
             <Image src="/power-icon.png" alt="Power" w="16px" h="16px" mr={2} />
             Desligar
           </MenuItem>

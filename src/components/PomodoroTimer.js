@@ -51,6 +51,8 @@ const PomodoroTimer = () => {
     toggleTimer,
     resetTimer,
     formatTime,
+    achievements,
+    achievementList,
   } = useContext(AppContext);
 
   const [isConfigOpen, setIsConfigOpen] = React.useState(false);
@@ -75,7 +77,9 @@ const PomodoroTimer = () => {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [toggleTimer, resetTimer]);
 
-  const handleConfigClose = () => setIsConfigOpen(false);
+  const handleConfigClose = () => {
+    setIsConfigOpen(false);
+  };
 
   const totalTime = isWorkSession
     ? workTime * 60
