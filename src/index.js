@@ -6,7 +6,6 @@ import { AppProvider } from './context/AppContext';
 import App from './App';
 import customTheme from './chakra.config';
 import './index.css';
-import './firebase'; // Importa o arquivo de inicialização do Firebase
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
