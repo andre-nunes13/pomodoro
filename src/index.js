@@ -6,6 +6,7 @@ import { AppProvider } from './context/AppContext';
 import App from './App';
 import customTheme from './chakra.config';
 import './index.css';
+import './firebase'; // Importa o arquivo de inicialização do Firebase
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -19,7 +20,7 @@ root.render(
   </React.StrictMode>
 );
 
-// Registro do Service Worker
+// Registro do Service Worker (mantém como está)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
