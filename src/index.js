@@ -19,7 +19,7 @@ root.render(
   </React.StrictMode>
 );
 
-// Registro do Service Worker
+// Registro do Service Worker (mantém como está)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
