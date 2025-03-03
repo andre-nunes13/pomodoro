@@ -3,7 +3,7 @@ import PomodoroTimer from "./components/PomodoroTimer";
 import SessionHistory from "./components/SessionHistory";
 import TaskList from "./components/TaskList";
 import Achievements from "./components/Achievements";
-import Settings from "./components/Settings";
+import SettingsWindow from "./components/Settings"; // Já usa forwardRef
 import StickyNote from "./components/StickyNote";
 import Taskbar from "./components/Taskbar";
 import { AppContext } from "./context/AppContext";
@@ -163,7 +163,7 @@ const LandingPage = ({ onStartClick }) => {
         color="#FFFFFF"
         zIndex={999}
         overflow="hidden"
-        fontFamily="'MS Sans Serif', Tahoma, sans-serif"
+        fontFamily="'MS Sans Serif', Tahoma, sans-serif'"
         border="2px solid #C0C0C0"
         boxShadow="inset 1px 1px #FFFFFF, inset -1px -1px #808080"
       >
@@ -213,11 +213,14 @@ const App = () => {
   const { keyboardShortcuts, activeTab, setActiveTab, t } = useContext(AppContext);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 });
+  const [settingsPosition, setSettingsPosition] = useState({ x: 300, y: 100 });
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [isStickyMinimized, setIsStickyMinimized] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false); // Estado local
   const dragRef = useRef(null);
   const stickyDragRef = useRef(null);
+  const settingsDragRef = useRef(null);
   const containerWidth = { base: "95%", md: "640px" };
   const openApps = [
     { id: "focusxp", title: t("FOCUSXP"), icon: "/focusxp-icon.png" },
@@ -267,9 +270,11 @@ const App = () => {
       const startY = e.clientY - position.y;
 
       const handleMouseMove = (e) => {
-        const newX = e.clientX - startX;
-        const newY = e.clientY - startY;
-        setPosition({ x: newX, y: newY });
+        requestAnimationFrame(() => {
+          const newX = Math.min(Math.max(0, e.clientX - startX), window.innerWidth - 200);
+          const newY = Math.min(Math.max(0, e.clientY - startY), window.innerHeight - 100);
+          setPosition({ x: newX, y: newY });
+        });
       };
 
       const handleMouseUp = () => {
@@ -306,6 +311,33 @@ const App = () => {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
 
+      e.preventDefault();
+    }
+  };
+
+  const handleSettingsMouseDown = (e) => {
+    if (settingsDragRef.current?.contains(e.target)) {
+      const startPos = {
+        x: e.clientX - settingsPosition.x,
+        y: e.clientY - settingsPosition.y
+      };
+
+      const handleDrag = (e) => {
+        requestAnimationFrame(() => {
+          setSettingsPosition({
+            x: e.clientX - startPos.x,
+            y: e.clientY - startPos.y
+          });
+        });
+      };
+
+      const cleanup = () => {
+        window.removeEventListener('mousemove', handleDrag);
+        window.removeEventListener('mouseup', cleanup);
+      };
+
+      window.addEventListener('mousemove', handleDrag);
+      window.addEventListener('mouseup', cleanup);
       e.preventDefault();
     }
   };
@@ -387,7 +419,7 @@ const App = () => {
                   fontSize="sm"
                   fontWeight="bold"
                   color="white"
-                  fontFamily="'MS Sans Serif', Tahoma, sans-serif"
+                  fontFamily="'MS Sans Serif', Tahoma, sans-serif'"
                 >
                   {t("FOCUSXP")}
                 </Text>
@@ -455,7 +487,7 @@ const App = () => {
                   borderColor="#808080"
                   boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
                 >
-                  {["timer", "history", "tasks", "achievements", "settings"].map((tab) => (
+                  {["timer", "history", "tasks", "achievements"].map((tab) => (
                     <Button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
@@ -473,7 +505,7 @@ const App = () => {
                       _hover={{ bg: "#D4D0C8" }}
                       textTransform="capitalize"
                       fontWeight="normal"
-                      fontFamily="'MS Sans Serif', Tahoma, sans-serif"
+                      fontFamily="'MS Sans Serif', Tahoma, sans-serif'"
                       fontSize="12px"
                     >
                       {t(tab.charAt(0).toUpperCase() + tab.slice(1))}
@@ -482,11 +514,10 @@ const App = () => {
                 </Stack>
 
                 <Box>
-                  {activeTab === "timer" && <PomodoroTimer />}
+                  {activeTab === "timer" && <PomodoroTimer setIsSettingsOpen={setIsSettingsOpen} />}
                   {activeTab === "history" && <SessionHistory />}
                   {activeTab === "tasks" && <TaskList />}
                   {activeTab === "achievements" && <Achievements />}
-                  {activeTab === "settings" && <Settings />}
                 </Box>
               </Box>
             </Box>
@@ -500,10 +531,20 @@ const App = () => {
             />
           )}
 
+          {/* Janela de Configurações com ref para arrastar */}
+          <SettingsWindow
+            ref={settingsDragRef}
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+            position={settingsPosition}
+            onMouseDown={handleSettingsMouseDown}
+          />
+
           <Taskbar
             openApps={openApps}
             onStartClick={handleStartClick}
             onAppClick={handleAppClick}
+            setIsSettingsOpen={setIsSettingsOpen}
           />
         </>
       )}

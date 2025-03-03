@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
   Flex,
@@ -11,12 +11,28 @@ import {
   MenuItem,
   IconButton,
   Tooltip,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
+import { AppContext } from "../context/AppContext";
 import "./Taskbar.css";
 
-const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
+const Taskbar = ({ openApps, onStartClick, onAppClick, setIsSettingsOpen }) => {
+  const { activeTab, setActiveTab, timeLeft, isRunning, isWorkSession, t } = useContext(AppContext);
   const [time, setTime] = useState(new Date());
   const [volumeLevel, setVolumeLevel] = useState(50);
+  const { isOpen: isVolumeOpen, onOpen: onVolumeOpen, onClose: onVolumeClose } = useDisclosure();
+  const { isOpen: isHelpOpen, onOpen: onHelpOpen, onClose: onHelpClose } = useDisclosure();
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
@@ -27,8 +43,15 @@ const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
     return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   };
 
-  const handleVolumeClick = () => {
-    setVolumeLevel((prev) => (prev === 0 ? 50 : 0));
+  const formatPomodoroTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
+    const secs = (seconds % 60).toString().padStart(2, "0");
+    return `${minutes}:${secs}`;
+  };
+
+  const handleVolumeChange = (value) => {
+    setVolumeLevel(value);
+    // Aqui você pode adicionar lógica para ajustar o volume real da aplicação, se aplicável
   };
 
   return (
@@ -69,7 +92,7 @@ const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
           onClick={onStartClick}
         >
           <Image src="/start-icon.png" alt="Start" w="16px" h="16px" mr={1} />
-          Iniciar
+          {t("Start")}
         </MenuButton>
         <MenuList
           bg="#ECE9D8"
@@ -80,7 +103,7 @@ const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
           p={0}
           bottom="30px"
           left="1px"
-          fontFamily="'MS Sans Serif', Tahoma, sans-serif"
+          fontFamily="'MS Sans Serif', Tahoma, sans-serif'"
           fontSize="12px"
         >
           <Box
@@ -92,27 +115,57 @@ const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
             borderBottom="1px solid"
             borderColor="#808080"
           >
-            Windows XP
+            Focus XP
           </Box>
-          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
-            <Image src="/documents-icon.png" alt="Documents" w="16px" h="16px" mr={2} />
-            Meus Documentos
+          <MenuItem
+            bg="#ECE9D8"
+            _hover={{ bg: "#D4D0C8" }}
+            px={2}
+            py={1}
+            onClick={() => setActiveTab("timer")}
+          >
+            <Image src="/timer-icon.png" alt="Timer" w="16px" h="16px" mr={2} />
+            {t("Timer")}
           </MenuItem>
-          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
-            <Image src="/computer-icon.png" alt="Computer" w="16px" h="16px" mr={2} />
-            Meu Computador
+          <MenuItem
+            bg="#ECE9D8"
+            _hover={{ bg: "#D4D0C8" }}
+            px={2}
+            py={1}
+            onClick={() => setActiveTab("history")}
+          >
+            <Image src="/history-icon.png" alt="History" w="16px" h="16px" mr={2} />
+            {t("History")}
           </MenuItem>
-          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
-            <Image src="/control-panel-icon.png" alt="Control Panel" w="16px" h="16px" mr={2} />
-            Painel de Controle
+          <MenuItem
+            bg="#ECE9D8"
+            _hover={{ bg: "#D4D0C8" }}
+            px={2}
+            py={1}
+            onClick={() => setActiveTab("tasks")}
+          >
+            <Image src="/tasks-icon.png" alt="Tasks" w="16px" h="16px" mr={2} />
+            {t("Tasks")}
           </MenuItem>
-          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1}>
-            <Image src="/run-icon.png" alt="Run" w="16px" h="16px" mr={2} />
-            Executar...
+          <MenuItem
+            bg="#ECE9D8"
+            _hover={{ bg: "#D4D0C8" }}
+            px={2}
+            py={1}
+            onClick={() => setActiveTab("achievements")}
+          >
+            <Image src="/achievements-icon.png" alt="Achievements" w="16px" h="16px" mr={2} />
+            {t("Achievements")}
           </MenuItem>
-          <MenuItem bg="#ECE9D8" _hover={{ bg: "#D4D0C8" }} px={2} py={1} color="#C00000">
-            <Image src="/power-icon.png" alt="Power" w="16px" h="16px" mr={2} />
-            Desligar
+          <MenuItem
+            bg="#ECE9D8"
+            _hover={{ bg: "#D4D0C8" }}
+            px={2}
+            py={1}
+            onClick={() => setIsSettingsOpen(true)} // Abre a janela de configurações
+          >
+            <Image src="/settings-icon.png" alt="Settings" w="16px" h="16px" mr={2} />
+            {t("Settings")}
           </MenuItem>
         </MenuList>
       </Menu>
@@ -126,7 +179,7 @@ const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
           <Button
             key={app.id}
             onClick={() => onAppClick(app.id)}
-            bg="#D4D0C8"
+            bg={activeTab === app.id ? "#ECE9D8" : "#D4D0C8"}
             color="#000000"
             fontSize="12px"
             height="24px"
@@ -140,24 +193,107 @@ const Taskbar = ({ openApps, onStartClick, onAppClick }) => {
             mx={1}
             display="flex"
             alignItems="center"
-            fontFamily="'MS Sans Serif', Tahoma, sans-serif"
+            fontFamily="'MS Sans Serif', Tahoma, sans-serif'"
           >
             <Image src={app.icon} alt={app.title} w="16px" h="16px" mr={1} />
-            <Text isTruncated>{app.title}</Text>
+            <Text isTruncated>{t(app.title)}</Text>
           </Button>
         ))}
       </Flex>
 
       {/* System Tray */}
       <Flex align="center" bg="#D4D0C8" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff, inset -1px -1px #808080" px={2} height="24px">
-        <Tooltip label="Conexão de Rede" placement="top">
-          <IconButton icon={<Image src="/network-icon.png" alt="Network" w="16px" h="16px" />} bg="transparent" size="xs" aria-label="Rede" _hover={{ bg: "#ECE9D8" }} mr={1} />
+        {/* Status do Pomodoro */}
+        <Tooltip label={isWorkSession ? t("Work") : t("Break")} placement="top">
+          <Text
+            fontSize="12px"
+            color={isRunning ? (isWorkSession ? "#008000" : "#FF0000") : "#000000"}
+            mr={2}
+          >
+            {formatPomodoroTime(timeLeft)}
+          </Text>
         </Tooltip>
-        <Tooltip label={volumeLevel === 0 ? "Ativar Som" : "Desativar Som"} placement="top">
-          <IconButton icon={<Image src={volumeLevel === 0 ? "/volume-muted-icon.png" : "/volume-icon.png"} alt="Volume" w="16px" h="16px" />} bg="transparent" size="xs" aria-label="Volume" _hover={{ bg: "#ECE9D8" }} mr={1} onClick={handleVolumeClick} />
+
+        {/* Controle de Volume */}
+        <Tooltip label={volumeLevel === 0 ? t("Unmute") : t("Mute")} placement="top">
+          <IconButton
+            icon={
+              <Image
+                src={volumeLevel === 0 ? "/volume-muted-icon.png" : "/volume-icon.png"}
+                alt="Volume"
+                w="16px"
+                h="16px"
+              />
+            }
+            bg="transparent"
+            size="xs"
+            aria-label="Volume"
+            _hover={{ bg: "#ECE9D8" }}
+            mr={1}
+            onClick={onVolumeOpen}
+          />
         </Tooltip>
-        <Text color="#000000">{formatTime(time)}</Text>
+        {isVolumeOpen && (
+          <Box
+            position="absolute"
+            bottom="30px"
+            right="50px"
+            bg="#ECE9D8"
+            border="1px solid"
+            borderColor="#808080"
+            boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
+            p={2}
+            w="150px"
+            onMouseLeave={onVolumeClose}
+          >
+            <Slider
+              value={volumeLevel}
+              onChange={handleVolumeChange}
+              min={0}
+              max={100}
+              step={1}
+            >
+              <SliderTrack bg="xpGray.200">
+                <SliderFilledTrack bg="xpBlue.300" />
+              </SliderTrack>
+              <SliderThumb boxSize={4} bg="xpGray.200" border="1px solid" borderColor="xpGray.200" />
+            </Slider>
+          </Box>
+        )}
+
+        {/* Relógio */}
+        <Text color="#000000" fontSize="12px">
+          {formatTime(time)}
+        </Text>
+
+        {/* Botão de Ajuda */}
+        <Tooltip label={t("Help")} placement="top">
+          <IconButton
+            icon={<Image src="/help-icon.png" alt="Help" w="16px" h="16px" />}
+            bg="transparent"
+            size="xs"
+            aria-label="Help"
+            _hover={{ bg: "#ECE9D8" }}
+            ml={2}
+            onClick={onHelpOpen}
+          />
+        </Tooltip>
       </Flex>
+
+      {/* Modal de Ajuda */}
+      <Modal isOpen={isHelpOpen} onClose={onHelpClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{t("Help")}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>{t("Here you can find some helpful information...")}</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onHelpClose}>{t("Close")}</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
