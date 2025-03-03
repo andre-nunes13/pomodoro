@@ -29,7 +29,7 @@ export const AppProvider = ({ children }) => {
   });
   const [language, setLanguage] = useState(() => getStoredValue("language", "en"));
   const [visitedTabs, setVisitedTabs] = useState(() => getStoredValue("visitedTabs", []));
-
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false); // Adicionado aqui
   const [timeLeft, setTimeLeft] = useState(workTime * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isWorkSession, setIsWorkSession] = useState(true);
@@ -333,6 +333,8 @@ export const AppProvider = ({ children }) => {
         t,
         visitedTabs,
         setVisitedTabs,
+        isSettingsOpen, // Adicionado ao contexto
+        setIsSettingsOpen, // Adicionado ao contexto
       }}
     >
       {children}
