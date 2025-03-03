@@ -1,61 +1,37 @@
 .App {
   text-align: center;
-  font-family: "MS Sans Serif", sans-serif; /* Fonte padrão do XP */
+  font-family: "MS Sans Serif", sans-serif;
 }
 
 .App-header {
-  background-color: #003087; /* Azul escuro típico das barras de título do XP */
-  min-height: 24px; /* Altura fixa para a barra de título */
+  background-color: #003087;
+  min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 4px;
   color: white;
-  border: 1px solid #808080; /* Borda cinza */
-  box-shadow: inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5); /* Efeito chanfrado */
+  border: 1px solid #808080;
+  box-shadow: inset 1px 1px #fff, 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* Removendo a animação do logo, pois não é típico do XP */
 .App-logo {
-  height: 20px; /* Tamanho fixo para ícone */
+  height: 20px;
   pointer-events: none;
 }
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
 
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 @media screen and (max-width: 768px) {
   .App {
     padding: 10px;
   }
 
   .App-header {
-    min-height: 40px;
-    font-size: 14px;
+    min-height: 20px;
+    font-size: 12px;
     padding: 0 8px;
   }
 
   .App-logo {
-    height: 24px;
+    height: 16px;
   }
 }
