@@ -1,17 +1,15 @@
 import React, { useContext, forwardRef } from "react";
 import { AppContext } from "../context/AppContext";
-import { Box, Checkbox, VStack } from "@chakra-ui/react";
+import { Box, Checkbox, VStack, useBreakpointValue } from "@chakra-ui/react";
 
 const StickyNote = forwardRef(({ position, onMouseDown }, ref) => {
   const { tasks, setTasks } = useContext(AppContext);
 
   const toggleTaskCompletion = (id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+    setTasks((prevTasks) => prevTasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)));
   };
+
+  const width = useBreakpointValue({ base: "80vw", md: "250px" });
 
   return (
     <Box
@@ -19,7 +17,8 @@ const StickyNote = forwardRef(({ position, onMouseDown }, ref) => {
       position="absolute"
       top={position.y}
       left={position.x}
-      w="250px"
+      transform={position.transform}
+      w={width}
       maxH="300px"
       bg="#FFFFCC"
       boxShadow="2px 2px 4px rgba(0, 0, 0, 0.3)"
@@ -45,13 +44,7 @@ const StickyNote = forwardRef(({ position, onMouseDown }, ref) => {
                 bg="#FFFFCC"
                 size="sm"
               />
-              <span
-                style={{
-                  textDecoration: task.completed ? "line-through" : "none",
-                }}
-              >
-                {task.description}
-              </span>
+              <span style={{ textDecoration: task.completed ? "line-through" : "none" }}>{task.description}</span>
             </Box>
           ))}
         </VStack>

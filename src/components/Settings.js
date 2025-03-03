@@ -19,9 +19,9 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 
-// Usando forwardRef para passar a referência da barra de título
 const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, ref) => {
   const {
     workTime,
@@ -44,25 +44,30 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
     t,
   } = useContext(AppContext);
 
+  const windowWidth = useBreakpointValue({ base: "90vw", md: "400px" });
+  const windowHeight = useBreakpointValue({ base: "80vh", md: "500px" });
+  const fontSize = useBreakpointValue({ base: "xs", md: "sm" });
+
   if (!isOpen) return null;
 
   return (
     <Box
       position="absolute"
-      top={`${position.y}px`}
-      left={`${position.x}px`}
-      w="400px"
-      h="500px"
+      top={position.y}
+      left={position.x}
+      transform={position.transform}
+      w={windowWidth}
+      h={windowHeight}
       bg="#ECE9D8"
       border="2px solid"
       borderColor="#808080"
       boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
       zIndex={20}
+      overflowY="auto"
     >
-      {/* Barra de Título com ref para arrastar */}
       <Flex
-        ref={ref} // Passando a referência para a lógica de arrastar
-        onMouseDown={onMouseDown} // Adicionado
+        ref={ref}
+        onMouseDown={onMouseDown}
         bgGradient="linear(to-r, #003087, #0052CC)"
         p={1}
         align="center"
@@ -73,12 +78,7 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
         cursor="move"
         userSelect="none"
       >
-        <Text
-          fontSize="sm"
-          fontWeight="bold"
-          color="white"
-          fontFamily="'MS Sans Serif', Tahoma, sans-serif'"
-        >
+        <Text fontSize="sm" fontWeight="bold" color="white" fontFamily="'MS Sans Serif', Tahoma, sans-serif'">
           {t("Settings")}
         </Text>
         <Button
@@ -94,59 +94,31 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
           fontSize="12px"
           p={0}
           onClick={onClose}
+          aria-label="Close"
         >
           X
         </Button>
       </Flex>
 
-      {/* Conteúdo da Janela */}
       <Tabs isFitted variant="enclosed" h="calc(100% - 30px)">
         <TabList bg="#D4D0C8" borderBottom="1px solid" borderColor="#808080">
-          <Tab
-            _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }}
-            border="1px solid"
-            borderColor="#808080"
-            boxShadow="inset 1px 1px #fff"
-            fontSize="12px"
-          >
+          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize="12px">
             {t("Timer")}
           </Tab>
-          <Tab
-            _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }}
-            border="1px solid"
-            borderColor="#808080"
-            boxShadow="inset 1px 1px #fff"
-            fontSize="12px"
-          >
+          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize="12px">
             {t("Notifications")}
           </Tab>
-          <Tab
-            _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }}
-            border="1px solid"
-            borderColor="#808080"
-            boxShadow="inset 1px 1px #fff"
-            fontSize="12px"
-          >
+          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize="12px">
             {t("Interface")}
           </Tab>
         </TabList>
 
         <TabPanels h="calc(100% - 40px)" overflowY="auto">
-          {/* Aba Timer */}
           <TabPanel p={4}>
             <Stack spacing={4}>
               <Box>
                 <Text mb={2} fontSize="sm">{t("Work Time (min)")}</Text>
-                <NumberInput
-                  value={workTime}
-                  onChange={(_, value) => setWorkTime(value)}
-                  min={1}
-                  max={120}
-                  bg="#FFFFFF"
-                  border="1px solid"
-                  borderColor="#808080"
-                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
-                >
+                <NumberInput value={workTime} onChange={(_, value) => setWorkTime(value)} min={1} max={120} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -156,16 +128,7 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
               </Box>
               <Box>
                 <Text mb={2} fontSize="sm">{t("Short Break Time (min)")}</Text>
-                <NumberInput
-                  value={breakTime}
-                  onChange={(_, value) => setBreakTime(value)}
-                  min={1}
-                  max={60}
-                  bg="#FFFFFF"
-                  border="1px solid"
-                  borderColor="#808080"
-                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
-                >
+                <NumberInput value={breakTime} onChange={(_, value) => setBreakTime(value)} min={1} max={60} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -175,16 +138,7 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
               </Box>
               <Box>
                 <Text mb={2} fontSize="sm">{t("Long Break Time (min)")}</Text>
-                <NumberInput
-                  value={longBreakTime}
-                  onChange={(_, value) => setLongBreakTime(value)}
-                  min={1}
-                  max={60}
-                  bg="#FFFFFF"
-                  border="1px solid"
-                  borderColor="#808080"
-                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
-                >
+                <NumberInput value={longBreakTime} onChange={(_, value) => setLongBreakTime(value)} min={1} max={60} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -194,16 +148,7 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
               </Box>
               <Box>
                 <Text mb={2} fontSize="sm">{t("Cycles Before Long Break")}</Text>
-                <NumberInput
-                  value={cyclesBeforeLongBreak}
-                  onChange={(_, value) => setCyclesBeforeLongBreak(value)}
-                  min={1}
-                  max={10}
-                  bg="#FFFFFF"
-                  border="1px solid"
-                  borderColor="#808080"
-                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
-                >
+                <NumberInput value={cyclesBeforeLongBreak} onChange={(_, value) => setCyclesBeforeLongBreak(value)} min={1} max={10} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -214,43 +159,22 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
             </Stack>
           </TabPanel>
 
-          {/* Aba Notifications */}
           <TabPanel p={4}>
             <Stack spacing={4}>
-              <Checkbox
-                isChecked={strictMode}
-                onChange={(e) => setStrictMode(e.target.checked)}
-                colorScheme="blue"
-                borderColor="#808080"
-                bg="#ECE9D8"
-              >
+              <Checkbox isChecked={strictMode} onChange={(e) => setStrictMode(e.target.checked)} colorScheme="blue" borderColor="#808080" bg="#ECE9D8">
                 {t("Strict Mode (no manual pauses or resets)")}
               </Checkbox>
-              <Checkbox
-                isChecked={notificationsEnabled}
-                onChange={(e) => setNotificationsEnabled(e.target.checked)}
-                colorScheme="blue"
-                borderColor="#808080"
-                bg="#ECE9D8"
-              >
+              <Checkbox isChecked={notificationsEnabled} onChange={(e) => setNotificationsEnabled(e.target.checked)} colorScheme="blue" borderColor="#808080" bg="#ECE9D8">
                 {t("Sound Notifications")}
               </Checkbox>
             </Stack>
           </TabPanel>
 
-          {/* Aba Interface */}
           <TabPanel p={4}>
             <Stack spacing={4}>
               <Box>
                 <Text mb={2} fontSize="sm">{t("Language")}</Text>
-                <Select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  bg="#FFFFFF"
-                  border="1px solid"
-                  borderColor="#808080"
-                  boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)"
-                >
+                <Select value={language} onChange={(e) => setLanguage(e.target.value)} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
                   <option value="pt">{t("Portuguese")}</option>
                   <option value="en">{t("English")}</option>
                 </Select>
@@ -260,17 +184,10 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
                 <Stack spacing={2}>
                   {Object.keys(keyboardShortcuts).map((key) => (
                     <Flex key={key} align="center">
-                      <Text w="100px" fontSize="sm">
-                        {t(key.charAt(0).toUpperCase() + key.slice(1))}
-                      </Text>
+                      <Text w="100px" fontSize="sm">{t(key.charAt(0).toUpperCase() + key.slice(1))}</Text>
                       <Input
                         value={keyboardShortcuts[key]}
-                        onChange={(e) =>
-                          setKeyboardShortcuts({
-                            ...keyboardShortcuts,
-                            [key]: e.target.value,
-                          })
-                        }
+                        onChange={(e) => setKeyboardShortcuts({ ...keyboardShortcuts, [key]: e.target.value })}
                         bg="#FFFFFF"
                         border="1px solid"
                         borderColor="#808080"
@@ -287,7 +204,6 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
         </TabPanels>
       </Tabs>
 
-      {/* Botões de Controle */}
       <Flex justify="flex-end" p={2} borderTop="1px solid" borderColor="#808080" bg="#ECE9D8">
         <Button
           size="sm"
