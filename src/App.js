@@ -7,6 +7,7 @@ import SettingsWindow from "./components/Settings";
 import StickyNote from "./components/StickyNote";
 import Taskbar from "./components/Taskbar";
 import { AppContext } from "./context/AppContext";
+import { useDraggable } from "./hooks/useDraggable"; // Import the hook
 import { Box, Button, Stack, Text, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
@@ -75,10 +76,18 @@ const ParticlesBackground = () => {
         if (distance < 200) { const force = (1 - distance / 200) * 0.015; p.vx += dx * force; p.vy += dy * force; }
       });
     };
-    const interval = setInterval(animateParticles, 16);
+
+    let animationFrameId;
+    const animationLoop = () => {
+      animateParticles();
+      animationFrameId = requestAnimationFrame(animationLoop);
+    };
+
+    animationLoop(); // Start the animation loop
+
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
-      clearInterval(interval);
+      cancelAnimationFrame(animationFrameId); // Cancel the animation frame on cleanup
     };
   }, [particles, mousePosition]);
 
@@ -148,30 +157,72 @@ const LandingPage = ({ onStartClick }) => {
 };
 
 const App = () => {
+  // --- Context Values ---
   const { keyboardShortcuts, activeTab, setActiveTab, t } = useContext(AppContext);
-  const [position, setPosition] = useState({ x: 50, y: 50 });
-  const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 });
-  const [settingsPosition, setSettingsPosition] = useState({ x: 300, y: 100 });
+
+  // --- General App State & UI Calculations ---
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const containerWidth = isMobile ? "90vw" : "640px";
+  const containerHeight = "auto";
+
+  // --- Main Application Window State, Refs, and Logic ---
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
+  const appWindowRef = useRef(null); // Ref for the draggable window itself
+  const dragRef = useRef(null);      // This is the handle for the main app window
+  
+  const { position: appPosition, setPosition: setAppPosition } = useDraggable(
+    appWindowRef,
+    dragRef,
+    { x: 50, y: 50 }, // Initial position
+    !isMaximized && !isMobile // isDraggable condition
+  );
+
+  const handleMinimize = () => setIsMinimized(true);
+  const handleMaximizeRestore = () => {
+    const newMaximizedState = !isMaximized;
+    setIsMaximized(newMaximizedState);
+    if (newMaximizedState) {
+      setAppPosition({ x: 0, y: 0 });
+    } else {
+      setAppPosition({ x: 50, y: 50 });
+    }
+  };
+  const handleClose = () => setIsMinimized(true);
+
+  // --- StickyNote State ---
   const [isStickyMinimized, setIsStickyMinimized] = useState(false);
+  const [stickyPosition, setStickyPosition] = useState({ x: 1250, y: 50 }); // Initial position
+
+  // --- SettingsWindow State ---
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const dragRef = useRef(null);
-  const stickyDragRef = useRef(null);
-  const settingsDragRef = useRef(null);
+  const [settingsPosition, setSettingsPosition] = useState({ x: 300, y: 100 }); // Initial position
 
-  const isMobile = useBreakpointValue({ base: true, md: false });
-  const containerWidth = isMobile ? "90vw" : "640px"; // Default no desktop: 640px
-  const containerHeight = "auto"; // Sempre auto no desktop e mobile
+  // --- Landing Page / Transition State & Logic ---
+  const [showLanding, setShowLanding] = useState(localStorage.getItem("firstLoad") !== "false");
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  const handleStartLandingClick = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setShowLanding(false);
+      localStorage.setItem("firstLoad", "false");
+    }, 1800);
+  };
 
+  // --- Taskbar Related ---
   const openApps = [
     { id: "focusxp", title: t("FOCUSXP"), icon: "/focusxp-icon.png" },
     { id: "stickynote", title: "Sticky Note", icon: "/sticky-icon.png" },
   ];
-
-  const [showLanding, setShowLanding] = useState(localStorage.getItem("firstLoad") !== "false");
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
+  const handleStartClick = () => console.log("Abrir menu Iniciar"); // Placeholder
+  const handleAppClick = (appId) => {
+    if (appId === "focusxp") setIsMinimized((prev) => !prev);
+    else if (appId === "stickynote") setIsStickyMinimized((prev) => !prev);
+  };
+  
+  // --- Global Effects ---
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (document.activeElement.tagName === "INPUT") return;
@@ -194,87 +245,8 @@ const App = () => {
     document.body.style.overflow = "hidden";
   }, []);
 
-  const handleMouseDown = (e) => {
-    if (isMobile) return; // Desativa arrastar apenas em mobile
-    if (dragRef.current && (e.target === dragRef.current || dragRef.current.contains(e.target))) {
-      const startX = e.clientX - position.x;
-      const startY = e.clientY - position.y;
-      const handleMouseMove = (e) => {
-        requestAnimationFrame(() => {
-          const newX = Math.min(Math.max(0, e.clientX - startX), window.innerWidth - 200);
-          const newY = Math.min(Math.max(0, e.clientY - startY), window.innerHeight - 100);
-          setPosition({ x: newX, y: newY });
-        });
-      };
-      const handleMouseUp = () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-      e.preventDefault();
-    }
-  };
-
-  const handleStickyMouseDown = (e) => {
-    if (isMobile) return; // Desativa arrastar apenas em mobile
-    if (stickyDragRef.current && (e.target === stickyDragRef.current || stickyDragRef.current.contains(e.target))) {
-      const startX = e.clientX - stickyPosition.x;
-      const startY = e.clientY - stickyPosition.y;
-      const handleMouseMove = (e) => {
-        const newX = e.clientX - startX;
-        const newY = e.clientY - startY;
-        setStickyPosition({ x: newX, y: newY });
-      };
-      const handleMouseUp = () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-      e.preventDefault();
-    }
-  };
-
-  const handleSettingsMouseDown = (e) => {
-    if (isMobile) return; // Desativa arrastar apenas em mobile
-    if (settingsDragRef.current?.contains(e.target)) {
-      const startPos = { x: e.clientX - settingsPosition.x, y: e.clientY - settingsPosition.y };
-      const handleDrag = (e) => {
-        requestAnimationFrame(() => {
-          setSettingsPosition({ x: e.clientX - startPos.x, y: e.clientY - startPos.y });
-        });
-      };
-      const cleanup = () => {
-        window.removeEventListener("mousemove", handleDrag);
-        window.removeEventListener("mouseup", cleanup);
-      };
-      window.addEventListener("mousemove", handleDrag);
-      window.addEventListener("mouseup", cleanup);
-      e.preventDefault();
-    }
-  };
-
-  const handleStartClick = () => console.log("Abrir menu Iniciar");
-  const handleAppClick = (appId) => {
-    if (appId === "focusxp") setIsMinimized((prev) => !prev);
-    else if (appId === "stickynote") setIsStickyMinimized((prev) => !prev);
-  };
-  const handleMinimize = () => setIsMinimized(true);
-  const handleMaximizeRestore = () => {
-    setIsMaximized(!isMaximized);
-    if (!isMaximized) setPosition({ x: 0, y: 0 });
-    else setPosition({ x: 50, y: 50 });
-  };
-  const handleClose = () => setIsMinimized(true);
-  const handleStartLandingClick = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setIsTransitioning(false);
-      setShowLanding(false);
-      localStorage.setItem("firstLoad", "false");
-    }, 1800);
-  };
+  // Note: settingsDragRef was previously nullified/removed, so it's not included in the reordering.
+  // Drag/mouse down handlers for individual components (StickyNote, Settings) were removed in previous steps.
 
   return (
     <Box minH="100vh" backgroundImage="url('/bliss.jpg')" backgroundSize="cover" backgroundPosition="center center" backgroundRepeat="no-repeat" display="flex" flexDirection="column">
@@ -285,11 +257,12 @@ const App = () => {
         <>
           {!isMinimized && (
             <Box
+              ref={appWindowRef} // Assign ref for the draggable element
               w={isMaximized ? "100vw" : containerWidth}
               h={isMaximized ? "100vh" : containerHeight}
               position={isMaximized ? "fixed" : isMobile ? "relative" : "absolute"}
-              top={isMaximized ? 0 : isMobile ? "10px" : position.y}
-              left={isMaximized ? 0 : isMobile ? "auto" : position.x}
+              top={isMaximized ? 0 : isMobile ? "10px" : `${appPosition.y}px`} // Use appPosition
+              left={isMaximized ? 0 : isMobile ? "auto" : `${appPosition.x}px`} // Use appPosition
               right={isMobile ? "auto" : undefined}
               mx={isMobile ? "auto" : undefined}
               bg="#ECE9D8"
@@ -301,8 +274,8 @@ const App = () => {
               overflowY="auto"
             >
               <Flex
-                ref={dragRef}
-                onMouseDown={handleMouseDown}
+                ref={dragRef} // This is the handle
+                // onMouseDown is removed, useDraggable handles this
                 bgGradient="linear(to-r, #003087, #0052CC)"
                 p={1}
                 align="center"
@@ -310,7 +283,7 @@ const App = () => {
                 borderBottom="1px solid"
                 borderColor="#808080"
                 boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
-                cursor={isMobile ? "default" : "move"}
+                cursor={!isMaximized && !isMobile ? "move" : "default"} // Updated cursor logic
                 userSelect="none"
               >
                 <Text fontSize="sm" fontWeight="bold" color="white" fontFamily="'MS Sans Serif', Tahoma, sans-serif'">
@@ -364,7 +337,7 @@ const App = () => {
                     fontSize="12px"
                     p={0}
                     onClick={handleClose}
-                    aria-label="Close"
+                    aria-label="Minimize" // Updated aria-label
                   >
                     X
                   </Button>
@@ -417,18 +390,22 @@ const App = () => {
 
           {!isStickyMinimized && (
             <StickyNote
-              ref={stickyDragRef}
-              position={isMobile ? { x: "50%", y: "auto", transform: "translateX(-50%)" } : stickyPosition}
-              onMouseDown={handleStickyMouseDown}
+              // ref is handled internally by StickyNote for its own drag logic
+              // The forwarded ref (if App needed one for other purposes) would be passed here.
+              // For now, App.js doesn't seem to require a ref to StickyNote itself.
+              initialPosition={isMobile ? { x: window.innerWidth * 0.5 - 125, y: 100 } : stickyPosition}
+              isDraggable={!isMobile}
             />
           )}
 
           <SettingsWindow
-            ref={settingsDragRef}
+            // ref is handled internally by SettingsWindow for its drag handle.
+            // App.js doesn't need a ref to SettingsWindow itself for other purposes.
             isOpen={isSettingsOpen}
             onClose={() => setIsSettingsOpen(false)}
-            position={isMobile ? { x: "50%", y: "10%", transform: "translateX(-50%)" } : settingsPosition}
-            onMouseDown={handleSettingsMouseDown}
+            initialPosition={isMobile ? { x: window.innerWidth * 0.5 - (useBreakpointValue({ base: window.innerWidth * 0.9, md: 400 }) / 2) , y: window.innerHeight * 0.1 } : settingsPosition}
+            isDraggable={!isMobile}
+            // onMouseDown is removed
           />
 
           <Taskbar

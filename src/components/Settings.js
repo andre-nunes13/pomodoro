@@ -1,4 +1,5 @@
-import React, { useContext, forwardRef } from "react";
+import React, { useContext, forwardRef, useRef, useEffect } from "react";
+import { useDraggable } from "../hooks/useDraggable"; // Import the hook
 import { AppContext } from "../context/AppContext";
 import {
   Box,
@@ -22,7 +23,26 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 
-const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, ref) => {
+// Helper to combine refs (assuming it's not in a shared utility file yet)
+const useCombinedRefs = (...refs) => {
+  const targetRef = React.useRef();
+
+  React.useEffect(() => {
+    refs.forEach(ref => {
+      if (!ref) return;
+
+      if (typeof ref === 'function') {
+        ref(targetRef.current);
+      } else {
+        ref.current = targetRef.current;
+      }
+    });
+  }, [refs]);
+
+  return targetRef;
+};
+
+const SettingsWindow = forwardRef(({ isOpen, onClose, initialPosition, isDraggable = true }, ref) => {
   const {
     workTime,
     setWorkTime,
@@ -46,16 +66,37 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
 
   const windowWidth = useBreakpointValue({ base: "90vw", md: "400px" });
   const windowHeight = useBreakpointValue({ base: "80vh", md: "500px" });
-  const fontSize = useBreakpointValue({ base: "xs", md: "sm" });
+  // fontSize is defined but not used, consider removing if not needed.
+
+  const settingsWindowRef = useRef(null);
+  const dragHandleRef = useRef(null);
+
+  const { position: currentPosition, setPosition } = useDraggable(
+    settingsWindowRef,
+    dragHandleRef,
+    initialPosition,
+    isDraggable
+  );
+
+  // If initialPosition prop changes, update the hook's state
+  useEffect(() => {
+    if (initialPosition) {
+      setPosition(initialPosition);
+    }
+  }, [initialPosition, setPosition]);
+
+  // Combine the forwarded ref (from App.js, for the handle) with the internal dragHandleRef
+  const combinedDragHandleRef = useCombinedRefs(ref, dragHandleRef);
 
   if (!isOpen) return null;
 
   return (
     <Box
+      ref={settingsWindowRef} // Ref for the draggable element
       position="absolute"
-      top={position.y}
-      left={position.x}
-      transform={position.transform}
+      top={`${currentPosition.y}px`}
+      left={`${currentPosition.x}px`}
+      // transform is not used by useDraggable
       w={windowWidth}
       h={windowHeight}
       bg="#ECE9D8"
@@ -63,11 +104,12 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
       borderColor="#808080"
       boxShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
       zIndex={20}
-      overflowY="auto"
+      // overflowY="auto" // Content might overflow if not handled by inner containers or if height is fixed.
+                         // The Tabs component below has its own overflow handling.
     >
       <Flex
-        ref={ref}
-        onMouseDown={onMouseDown}
+        ref={combinedDragHandleRef} // Ref for the drag handle
+        // onMouseDown is no longer needed here
         bgGradient="linear(to-r, #003087, #0052CC)"
         p={1}
         align="center"
@@ -75,7 +117,7 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
         borderBottom="1px solid"
         borderColor="#808080"
         boxShadow="inset 1px 1px #fff, inset -1px -1px #808080"
-        cursor="move"
+        cursor={isDraggable ? "move" : "default"} // Update cursor based on isDraggable
         userSelect="none"
       >
         <Text fontSize="sm" fontWeight="bold" color="white" fontFamily="'MS Sans Serif', Tahoma, sans-serif'">
@@ -102,13 +144,13 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
 
       <Tabs isFitted variant="enclosed" h="calc(100% - 30px)">
         <TabList bg="#D4D0C8" borderBottom="1px solid" borderColor="#808080">
-          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize="12px">
+          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize={fontSize}>
             {t("Timer")}
           </Tab>
-          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize="12px">
+          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize={fontSize}>
             {t("Notifications")}
           </Tab>
-          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize="12px">
+          <Tab _selected={{ bg: "#ECE9D8", borderTop: "2px solid #FFFFFF", borderBottom: "none" }} border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px #fff" fontSize={fontSize}>
             {t("Interface")}
           </Tab>
         </TabList>
@@ -117,9 +159,9 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
           <TabPanel p={4}>
             <Stack spacing={4}>
               <Box>
-                <Text mb={2} fontSize="sm">{t("Work Time (min)")}</Text>
-                <NumberInput value={workTime} onChange={(_, value) => setWorkTime(value)} min={1} max={120} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
-                  <NumberInputField />
+                <Text mb={2} fontSize={fontSize}>{t("Work Time (min)")}</Text>
+                <NumberInput value={workTime} onChange={(_, value) => setWorkTime(value)} min={1} max={120} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)" size={fontSize}>
+                  <NumberInputField fontSize={fontSize} />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
@@ -127,9 +169,9 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
                 </NumberInput>
               </Box>
               <Box>
-                <Text mb={2} fontSize="sm">{t("Short Break Time (min)")}</Text>
-                <NumberInput value={breakTime} onChange={(_, value) => setBreakTime(value)} min={1} max={60} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
-                  <NumberInputField />
+                <Text mb={2} fontSize={fontSize}>{t("Short Break Time (min)")}</Text>
+                <NumberInput value={breakTime} onChange={(_, value) => setBreakTime(value)} min={1} max={60} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)" size={fontSize}>
+                  <NumberInputField fontSize={fontSize} />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
@@ -137,9 +179,9 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
                 </NumberInput>
               </Box>
               <Box>
-                <Text mb={2} fontSize="sm">{t("Long Break Time (min)")}</Text>
-                <NumberInput value={longBreakTime} onChange={(_, value) => setLongBreakTime(value)} min={1} max={60} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
-                  <NumberInputField />
+                <Text mb={2} fontSize={fontSize}>{t("Long Break Time (min)")}</Text>
+                <NumberInput value={longBreakTime} onChange={(_, value) => setLongBreakTime(value)} min={1} max={60} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)" size={fontSize}>
+                  <NumberInputField fontSize={fontSize} />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
@@ -147,8 +189,8 @@ const SettingsWindow = forwardRef(({ isOpen, onClose, position, onMouseDown }, r
                 </NumberInput>
               </Box>
               <Box>
-                <Text mb={2} fontSize="sm">{t("Cycles Before Long Break")}</Text>
-                <NumberInput value={cyclesBeforeLongBreak} onChange={(_, value) => setCyclesBeforeLongBreak(value)} min={1} max={10} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)">
+                <Text mb={2} fontSize={fontSize}>{t("Cycles Before Long Break")}</Text>
+                <NumberInput value={cyclesBeforeLongBreak} onChange={(_, value) => setCyclesBeforeLongBreak(value)} min={1} max={10} bg="#FFFFFF" border="1px solid" borderColor="#808080" boxShadow="inset 1px 1px 2px rgba(0, 0, 0, 0.2)" size={fontSize}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
