@@ -78,10 +78,10 @@ const defaultSettings: AppSettings = {
   cyclesBeforeLongBreak: 4,
   strictMode: false,
   notificationsEnabled: true,
-  soundPack: "win98",
+  soundPack: "xp",
   volume: 60,
   language: "en",
-  wallpaper: "teal98",
+  wallpaper: "bliss",
   crtScanlines: false,
   clockTheme: "lcd",
   keyboardShortcuts: {
@@ -98,7 +98,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   timer: {
     id: "timer",
     title: "timerTitle",
-    icon: "/focusxp-icon.png",
+    icon: "/icons/focusxp-icon.png",
     isOpen: true,
     isMinimized: false,
     isMaximized: false,
@@ -109,7 +109,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   tasks: {
     id: "tasks",
     title: "tasksTitle",
-    icon: "/documents-icon.png",
+    icon: "/icons/documents-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -120,7 +120,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   notes: {
     id: "notes",
     title: "notesTitle",
-    icon: "/sticky-icon.png",
+    icon: "/icons/sticky-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -131,7 +131,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   history: {
     id: "history",
     title: "historyTitle",
-    icon: "/computer-icon.png",
+    icon: "/icons/computer-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -142,7 +142,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   achievements: {
     id: "achievements",
     title: "achievementsTitle",
-    icon: "/help-icon.png",
+    icon: "/icons/help-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -153,7 +153,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   settings: {
     id: "settings",
     title: "settingsTitle",
-    icon: "/control-panel-icon.png",
+    icon: "/icons/control-panel-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -164,7 +164,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   help: {
     id: "help",
     title: "help",
-    icon: "/help-icon.png",
+    icon: "/icons/help-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -175,7 +175,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   run: {
     id: "run",
     title: "run",
-    icon: "/run-icon.png",
+    icon: "/icons/run-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -186,7 +186,7 @@ const defaultWindows: Record<WindowId, WindowState> = {
   shutdown: {
     id: "shutdown",
     title: "shutdownTitle",
-    icon: "/power-icon.png",
+    icon: "/icons/power-icon.png",
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -517,7 +517,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         name: "Customizer",
         description: "Change default wallpaper or sound pack",
         icon: "🎨",
-        condition: () => settings.wallpaper !== "teal98" || settings.soundPack !== "win98",
+        condition: () => settings.wallpaper !== "bliss" || settings.soundPack !== "xp",
       },
       {
         id: 14,
@@ -607,6 +607,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           setTimeLeft(nextSeconds);
           setEndTime(Date.now() + nextSeconds * 1000);
         }
+
+        // The new phase auto-started after the alarm: soft transition blip
+        soundManager.playNotification();
       }
     }, 1000);
 
@@ -615,7 +618,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const toggleTimer = useCallback(() => {
     if (settings.strictMode && isRunning && sessionType === "Work") {
-      soundManager.playWarning();
+      soundManager.playError();
       return;
     }
     soundManager.playClick();
@@ -631,7 +634,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const resetTimer = useCallback(() => {
     if (settings.strictMode && isRunning && sessionType === "Work") {
-      soundManager.playWarning();
+      soundManager.playError();
       return;
     }
     soundManager.playClick();
@@ -644,7 +647,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const skipPhase = useCallback(() => {
     if (settings.strictMode && isRunning && sessionType === "Work") {
-      soundManager.playWarning();
+      soundManager.playError();
       return;
     }
     soundManager.playClick();

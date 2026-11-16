@@ -56,7 +56,7 @@ export interface Achievement {
 
 export type Language = "en" | "pt" | "es";
 export type Wallpaper = "teal98" | "bliss" | "setup" | "clouds" | "matrix" | "night";
-export type SoundPack = "win98" | "arcade" | "modern" | "mute";
+export type SoundPack = "xp" | "win98" | "arcade" | "modern" | "mute";
 
 export type ClockTheme = "lcd" | "led";
 

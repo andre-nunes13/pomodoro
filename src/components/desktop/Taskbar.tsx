@@ -44,7 +44,7 @@ export const Taskbar: React.FC = () => {
           }`}
         >
           <Image
-            src="/start-icon.png"
+            src="/icons/start-icon.png"
             alt="Start"
             width={16}
             height={16}

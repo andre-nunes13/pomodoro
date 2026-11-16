@@ -53,7 +53,7 @@ export const Desktop: React.FC = () => {
     switch (settings.wallpaper) {
       case "bliss":
         return {
-          backgroundImage: "url('/bliss.jpg')",
+          backgroundImage: "url('/wallpapers/bliss.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
@@ -113,7 +113,7 @@ export const Desktop: React.FC = () => {
         <DesktopIcon
           id="timer"
           title={t("timerTitle")}
-          icon="/focusxp-icon.png"
+          icon="/icons/focusxp-icon.png"
           isSelected={selectedIconId === "timer"}
           onSelect={() => setSelectedIconId((prev) => (prev === "timer" ? null : "timer"))}
           onOpen={() => {
@@ -124,7 +124,7 @@ export const Desktop: React.FC = () => {
         <DesktopIcon
           id="tasks"
           title={t("tasksTitle")}
-          icon="/documents-icon.png"
+          icon="/icons/documents-icon.png"
           isSelected={selectedIconId === "tasks"}
           onSelect={() => setSelectedIconId((prev) => (prev === "tasks" ? null : "tasks"))}
           onOpen={() => {
@@ -135,7 +135,7 @@ export const Desktop: React.FC = () => {
         <DesktopIcon
           id="notes"
           title={t("notesTitle")}
-          icon="/sticky-icon.png"
+          icon="/icons/sticky-icon.png"
           isSelected={selectedIconId === "notes"}
           onSelect={() => setSelectedIconId((prev) => (prev === "notes" ? null : "notes"))}
           onOpen={() => {
@@ -146,7 +146,7 @@ export const Desktop: React.FC = () => {
         <DesktopIcon
           id="history"
           title={t("historyTitle")}
-          icon="/computer-icon.png"
+          icon="/icons/computer-icon.png"
           isSelected={selectedIconId === "history"}
           onSelect={() => setSelectedIconId((prev) => (prev === "history" ? null : "history"))}
           onOpen={() => {
@@ -157,7 +157,7 @@ export const Desktop: React.FC = () => {
         <DesktopIcon
           id="achievements"
           title={t("achievementsTitle")}
-          icon="/help-icon.png"
+          icon="/icons/help-icon.png"
           isSelected={selectedIconId === "achievements"}
           onSelect={() => setSelectedIconId((prev) => (prev === "achievements" ? null : "achievements"))}
           onOpen={() => {
@@ -168,7 +168,7 @@ export const Desktop: React.FC = () => {
         <DesktopIcon
           id="settings"
           title={t("settingsTitle")}
-          icon="/control-panel-icon.png"
+          icon="/icons/control-panel-icon.png"
           isSelected={selectedIconId === "settings"}
           onSelect={() => setSelectedIconId((prev) => (prev === "settings" ? null : "settings"))}
           onOpen={() => {
@@ -179,7 +179,7 @@ export const Desktop: React.FC = () => {
         <DesktopIcon
           id="recycle"
           title={t("recycleBin")}
-          icon="/power-icon.png"
+          icon="/icons/power-icon.png"
           isSelected={selectedIconId === "recycle"}
           onSelect={() => setSelectedIconId((prev) => (prev === "recycle" ? null : "recycle"))}
           onOpen={() => {

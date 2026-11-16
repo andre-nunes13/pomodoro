@@ -22,6 +22,10 @@ export const SettingsApp: React.FC = () => {
     soundManager.playClick();
   };
 
+  const handleTestStartup = () => {
+    soundManager.playStartupXp();
+  };
+
   return (
     <div className="flex flex-col gap-2 p-2 bg-[#c0c0c0] font-sans text-black select-none">
       {/* Settings Tabs Header */}
@@ -166,6 +170,7 @@ export const SettingsApp: React.FC = () => {
                 onChange={(e) => updateSettings({ soundPack: e.target.value as SoundPack })}
                 className="win98-sunken px-2 py-1 bg-white cursor-pointer"
               >
+                <option value="xp">{t("soundPackXp")}</option>
                 <option value="win98">Windows 98 Classic Chimes</option>
                 <option value="arcade">8-Bit Retro Arcade</option>
                 <option value="modern">Subtle Modern Tones</option>
@@ -190,7 +195,13 @@ export const SettingsApp: React.FC = () => {
 
             <div className="border-t border-gray-200 pt-2">
               <div className="font-bold mb-1.5">Test Sound Effects:</div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={handleTestStartup}
+                  className="win98-btn px-2.5 py-1 text-xs"
+                >
+                  {t("testStartupSound")}
+                </button>
                 <button
                   onClick={handleTestClick}
                   className="win98-btn px-2.5 py-1 text-xs"

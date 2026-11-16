@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useApp } from "@/context/AppContext";
+import { soundManager } from "@/lib/audio";
 
 export const ShutdownDialog: React.FC = () => {
   const { closeWindow, t } = useApp();
@@ -15,6 +16,7 @@ export const ShutdownDialog: React.FC = () => {
     } else if (option === "relax") {
       closeWindow("shutdown");
     } else {
+      soundManager.playShutdownXp();
       setIsShutDown(true);
     }
   };
@@ -45,7 +47,7 @@ export const ShutdownDialog: React.FC = () => {
     <div className="flex flex-col gap-3 p-3 bg-[#c0c0c0] font-sans text-black text-xs select-none">
       <div className="flex items-center gap-3">
         <Image
-          src="/power-icon.png"
+          src="/icons/power-icon.png"
           alt=""
           width={36}
           height={36}

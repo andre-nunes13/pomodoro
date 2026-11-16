@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useApp } from "@/context/AppContext";
+import { soundManager } from "@/lib/audio";
 
 export const RunDialog: React.FC = () => {
   const { openWindow, closeWindow, t } = useApp();
@@ -28,6 +29,7 @@ export const RunDialog: React.FC = () => {
     } else if (cmd.startsWith("http://") || cmd.startsWith("https://")) {
       window.open(cmd, "_blank");
     } else {
+      soundManager.playError();
       alert(`Cannot find the file '${command}'. Type 'timer', 'tasks', 'notes', 'history', or 'settings'.`);
     }
 
@@ -39,7 +41,7 @@ export const RunDialog: React.FC = () => {
     <form onSubmit={handleRun} className="flex flex-col gap-3 p-3 bg-[#c0c0c0] font-sans text-black text-xs select-none">
       <div className="flex items-center gap-3">
         <Image
-          src="/run-icon.png"
+          src="/icons/run-icon.png"
           alt=""
           width={32}
           height={32}

@@ -7,7 +7,7 @@ import { soundManager } from "@/lib/audio";
 interface DesktopIconProps {
   id: string;
   title: string;
-  icon: string;
+  icon?: string;
   isSelected?: boolean;
   onSelect?: () => void;
   onOpen: () => void;
@@ -16,7 +16,7 @@ interface DesktopIconProps {
 export const DesktopIcon: React.FC<DesktopIconProps> = ({
   id,
   title,
-  icon,
+  icon = "/icons/focusxp-icon.png",
   isSelected = false,
   onSelect,
   onOpen,
