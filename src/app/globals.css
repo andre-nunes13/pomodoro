@@ -1,26 +1,59 @@
 @import "tailwindcss";
+@import "../styles/win98.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #008080;
+  --foreground: #000000;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+  user-select: none;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  cursor: url("/xp-cursor.cur"), default;
+}
+
+button, a, input, select, textarea {
+  cursor: url("/xp-pointer.cur"), pointer;
+}
+
+/* Custom scrollbars for retro win98 feeling */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background: #dfdfdf;
+}
+
+::-webkit-scrollbar-track {
+  background: repeating-conic-gradient(#c0c0c0 0% 25%, #ffffff 0% 50%) 50% / 2px 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0;
+  box-shadow: inset 1px 1px #dfdfdf,
+              inset -1px -1px #808080,
+              inset 2px 2px #ffffff,
+              inset -2px -2px #000000;
+}
+
+::-webkit-scrollbar-thumb:active {
+  box-shadow: inset 1px 1px #000000,
+              inset -1px -1px #ffffff,
+              inset 2px 2px #808080,
+              inset -2px -2px #dfdfdf;
+}
+
+::-webkit-scrollbar-button {
+  background-color: #c0c0c0;
+  box-shadow: inset 1px 1px #dfdfdf,
+              inset -1px -1px #808080,
+              inset 2px 2px #ffffff,
+              inset -2px -2px #000000;
+  display: block;
+  height: 16px;
+  width: 16px;
 }

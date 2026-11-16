@@ -1,0 +1,229 @@
+/* Windows 98 Authentic Retro Design System */
+
+:root {
+  --win-gray: #c0c0c0;
+  --win-gray-light: #dfdfdf;
+  --win-gray-dark: #808080;
+  --win-black: #000000;
+  --win-white: #ffffff;
+  --win-blue-title: #000080;
+  --win-blue-grad: #1084d0;
+  --win-teal-desktop: #008080;
+}
+
+/* System Font Family */
+.win98-font {
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.2px;
+}
+
+/* Standard Raised 3D Box */
+.win98-box {
+  background-color: var(--win-gray);
+  box-shadow: inset 1px 1px var(--win-gray-light),
+              inset -1px -1px var(--win-gray-dark),
+              inset 2px 2px var(--win-white),
+              inset -2px -2px var(--win-black);
+}
+
+/* Sunken / Inset 3D Box (Text inputs, wells, progress, status bars) */
+.win98-sunken {
+  background-color: var(--win-white);
+  box-shadow: inset 1px 1px var(--win-gray-dark),
+              inset -1px -1px var(--win-white),
+              inset 2px 2px var(--win-black),
+              inset -2px -2px var(--win-gray-light);
+}
+
+/* Authentic Minesweeper / Solitaire style LED Display Well */
+.win98-led-well {
+  background-color: #000000 !important;
+  box-shadow: inset 1px 1px var(--win-gray-dark),
+              inset -1px -1px var(--win-white),
+              inset 2px 2px var(--win-black),
+              inset -2px -2px var(--win-gray-light);
+}
+
+.win98-led-digits {
+  font-family: "Courier New", Courier, "Lucida Console", Monaco, monospace;
+  font-weight: 900;
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+/* Minesweeper Crimson Red LED */
+.win98-led-red {
+  color: #ff0505;
+  text-shadow: 0 0 1px #ff0000;
+}
+
+/* Retro LCD Olive Style (Authentic digital watch / vintage LCD counter) */
+.win98-lcd-well {
+  background-color: #9ba793 !important;
+  box-shadow: inset 1px 1px #596153,
+              inset -1px -1px var(--win-white),
+              inset 2px 2px #2f342b,
+              inset -2px -2px #c2cbb9;
+}
+
+.win98-lcd-digits {
+  color: #172115;
+  font-family: "Courier New", Courier, "Lucida Console", Monaco, monospace;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Classic Button */
+.win98-btn {
+  background-color: var(--win-gray);
+  color: var(--win-black);
+  box-shadow: inset 1px 1px var(--win-gray-light),
+              inset -1px -1px var(--win-gray-dark),
+              inset 2px 2px var(--win-white),
+              inset -2px -2px var(--win-black);
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+.win98-btn:active,
+.win98-btn.is-active {
+  box-shadow: inset 1px 1px var(--win-black),
+              inset -1px -1px var(--win-white),
+              inset 2px 2px var(--win-gray-dark),
+              inset -2px -2px var(--win-gray-light);
+  transform: translate(1px, 1px);
+}
+
+.win98-btn:disabled {
+  color: var(--win-gray-dark);
+  text-shadow: 1px 1px var(--win-white);
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Titlebar */
+.win98-titlebar {
+  background: linear-gradient(90deg, var(--win-blue-title) 0%, var(--win-blue-grad) 100%);
+  color: var(--win-white);
+  padding: 3px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 12px;
+  user-select: none;
+}
+
+.win98-titlebar.inactive {
+  background: linear-gradient(90deg, var(--win-gray-dark) 0%, #b5b5b5 100%);
+  color: #d4d0c8;
+}
+
+/* Titlebar Action Buttons (Min, Max, Close) */
+.win98-title-btn {
+  background-color: var(--win-gray);
+  box-shadow: inset 1px 1px var(--win-gray-light),
+              inset -1px -1px var(--win-gray-dark),
+              inset 2px 2px var(--win-white),
+              inset -2px -2px var(--win-black);
+  width: 16px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  color: var(--win-black);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.win98-title-btn:active {
+  box-shadow: inset 1px 1px var(--win-black),
+              inset -1px -1px var(--win-white),
+              inset 2px 2px var(--win-gray-dark),
+              inset -2px -2px var(--win-gray-light);
+}
+
+/* Taskbar */
+.win98-taskbar {
+  background-color: var(--win-gray);
+  box-shadow: inset 0 1px var(--win-white), inset 0 2px var(--win-gray-light);
+  border-top: 1px solid var(--win-gray-light);
+}
+
+/* Taskbar Program Button */
+.win98-task-btn {
+  background-color: var(--win-gray);
+  box-shadow: inset 1px 1px var(--win-gray-light),
+              inset -1px -1px var(--win-gray-dark),
+              inset 2px 2px var(--win-white),
+              inset -2px -2px var(--win-black);
+  height: 24px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: normal;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.win98-task-btn.active {
+  background: repeating-conic-gradient(#c0c0c0 0% 25%, #ffffff 0% 50%) 50% / 2px 2px;
+  box-shadow: inset 1px 1px var(--win-black),
+              inset -1px -1px var(--win-white),
+              inset 2px 2px var(--win-gray-dark),
+              inset -2px -2px var(--win-gray-light);
+  font-weight: bold;
+}
+
+/* Windows 98 Segmented Progress Bar */
+.win98-progress-track {
+  background-color: var(--win-white);
+  box-shadow: inset 1px 1px var(--win-gray-dark),
+              inset -1px -1px var(--win-white),
+              inset 2px 2px var(--win-black),
+              inset -2px -2px var(--win-gray-light);
+  padding: 2px;
+  height: 18px;
+  display: flex;
+  overflow: hidden;
+}
+
+.win98-progress-bar {
+  background: repeating-linear-gradient(
+    90deg,
+    #000080,
+    #000080 8px,
+    var(--win-white) 8px,
+    var(--win-white) 10px
+  );
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* CRT Scanlines Overlay */
+.crt-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  ),
+  linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.04),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.04)
+  );
+  background-size: 100% 3px, 4px 100%;
+  pointer-events: none;
+}

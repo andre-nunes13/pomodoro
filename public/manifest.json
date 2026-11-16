@@ -1,0 +1,36 @@
+{
+  "name": "Focus XP - Pomodoro Timer",
+  "short_name": "Focus XP",
+  "description": "A Pomodoro Timer app to help you focus.",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#003087",
+  "background_color": "#ECE9D8",
+  "display": "standalone",
+  "start_url": "/",
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "360x640",
+      "type": "image/png",
+      "form_factor": "handset"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }  
+  ]
+}
