@@ -1,0 +1,17 @@
+/* Taskbar.css */
+::-webkit-scrollbar {
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #808080;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ECE9D8;
+}
+
+.taskbar-text {
+  user-select: none;
+}
