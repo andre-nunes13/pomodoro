@@ -7,8 +7,9 @@ export const metadata: Metadata = {
   description:
     "A nostalgic Windows 98-inspired productivity operating system featuring Pomodoro timer, task manager with Gemini AI, sticky notes, and session history.",
   icons: {
-    icon: "/focusxp-icon.png",
+    icon: "/icons/focusxp-icon.png",
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -18,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className="h-screen w-screen overflow-hidden">
         <AppProvider>{children}</AppProvider>
       </body>

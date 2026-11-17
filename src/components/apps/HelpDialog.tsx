@@ -11,7 +11,7 @@ export const HelpDialog: React.FC = () => {
     <div className="flex flex-col gap-3 p-3 bg-[#c0c0c0] font-sans text-black select-none text-xs">
       <div className="flex items-center gap-3 border-b border-[#808080] pb-2">
         <Image
-          src="/focusxp-icon.png"
+          src="/icons/focusxp-icon.png"
           alt=""
           width={36}
           height={36}

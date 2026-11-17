@@ -34,12 +34,12 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
   };
 
   const menuItems: Array<{ id: WindowId; label: string; icon: string }> = [
-    { id: "timer", label: t("timerTitle"), icon: "/focusxp-icon.png" },
-    { id: "tasks", label: t("tasksTitle"), icon: "/documents-icon.png" },
-    { id: "notes", label: t("notesTitle"), icon: "/sticky-icon.png" },
-    { id: "history", label: t("historyTitle"), icon: "/computer-icon.png" },
-    { id: "achievements", label: t("achievementsTitle"), icon: "/help-icon.png" },
-    { id: "settings", label: t("settingsTitle"), icon: "/control-panel-icon.png" },
+    { id: "timer", label: t("timerTitle"), icon: "/icons/focusxp-icon.png" },
+    { id: "tasks", label: t("tasksTitle"), icon: "/icons/documents-icon.png" },
+    { id: "notes", label: t("notesTitle"), icon: "/icons/sticky-icon.png" },
+    { id: "history", label: t("historyTitle"), icon: "/icons/computer-icon.png" },
+    { id: "achievements", label: t("achievementsTitle"), icon: "/icons/help-icon.png" },
+    { id: "settings", label: t("settingsTitle"), icon: "/icons/control-panel-icon.png" },
   ];
 
   return (
@@ -85,7 +85,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
           className="flex items-center gap-2.5 px-3 py-1.5 text-xs text-black hover:bg-[#000080] hover:text-white text-left cursor-pointer group"
         >
           <Image
-            src="/help-icon.png"
+            src="/icons/help-icon.png"
             alt=""
             width={20}
             height={20}
@@ -100,7 +100,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
           className="flex items-center gap-2.5 px-3 py-1.5 text-xs text-black hover:bg-[#000080] hover:text-white text-left cursor-pointer group"
         >
           <Image
-            src="/run-icon.png"
+            src="/icons/run-icon.png"
             alt=""
             width={20}
             height={20}
@@ -117,7 +117,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
           className="flex items-center gap-2.5 px-3 py-1.5 text-xs text-black hover:bg-[#000080] hover:text-white text-left cursor-pointer group"
         >
           <Image
-            src="/power-icon.png"
+            src="/icons/power-icon.png"
             alt=""
             width={20}
             height={20}

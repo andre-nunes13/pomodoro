@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { useApp } from "@/context/AppContext";
-import { Volume2, VolumeX } from "lucide-react";
 
 export const SystemTray: React.FC = () => {
   const { timeLeft, isRunning, sessionType, formatTime, settings, updateSettings, t } = useApp();
@@ -53,13 +53,25 @@ export const SystemTray: React.FC = () => {
       {/* Sound / Volume Icon */}
       <button
         onClick={() => setShowVolumePopup(!showVolumePopup)}
-        className="hover:bg-white/40 p-0.5 rounded-[1px] cursor-pointer"
+        className="hover:bg-white/40 p-0.5 rounded-[1px] cursor-pointer flex items-center justify-center"
         title={t("audioSettings")}
       >
         {settings.soundPack === "mute" || settings.volume === 0 ? (
-          <VolumeX className="w-3.5 h-3.5 text-red-700" />
+          <Image
+            src="/icons/volume-muted-icon.png"
+            alt="Muted"
+            width={16}
+            height={16}
+            className="w-3.5 h-3.5 object-contain"
+          />
         ) : (
-          <Volume2 className="w-3.5 h-3.5 text-black" />
+          <Image
+            src="/icons/volume-icon.png"
+            alt="Volume"
+            width={16}
+            height={16}
+            className="w-3.5 h-3.5 object-contain"
+          />
         )}
       </button>
 
